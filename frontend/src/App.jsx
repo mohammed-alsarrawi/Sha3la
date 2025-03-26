@@ -7,7 +7,7 @@ import Navbar from "./components/navbar/Navbar";
 import Home from "./components/home/Home"; 
 import About from "./components/about/About";
 import Contact from "./components/contact/Contact";
-
+import OrderGasCylinders from "./components/services/OrderGasCylinders";
 
 
 function App() {
@@ -20,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/order-gas" element={<OrderGasCylinders />} />
       </Routes>
     </Router>
   );

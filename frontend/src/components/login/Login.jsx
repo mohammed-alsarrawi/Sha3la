@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.png"; // تأكد من مسار الصورة
 
 function Login() {
-  // State variables
+  // حالات الحقول
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -38,17 +38,13 @@ function Login() {
   };
 
   return (
-    <div className="font-[sans-serif]" style={{ backgroundColor: "#F6F6F6" }}>
+    <div
+      className="font-[sans-serif]"
+      style={{ backgroundColor: "#F6F6F6" }}
+      dir="rtl"
+    >
       <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
         <div className="max-w-md w-full">
-          <a href="/">
-            <img
-              src={logo}
-              alt="الشعار"
-              className="w-24 h-24 object-contain mb-8 mx-auto block"
-            />
-          </a>
-
           <div
             className="p-8 rounded-2xl shadow-lg"
             style={{
@@ -64,7 +60,7 @@ function Login() {
             </h2>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-              {/* Username */}
+              {/* اسم المستخدم */}
               <div>
                 <label
                   className="text-sm mb-2 block"
@@ -90,7 +86,7 @@ function Login() {
                 </div>
               </div>
 
-              {/* Password */}
+              {/* كلمة المرور */}
               <div>
                 <label
                   className="text-sm mb-2 block"
@@ -116,7 +112,7 @@ function Login() {
                 </div>
               </div>
 
-              {/* Remember Me */}
+              {/* تذكرني */}
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center">
                   <input
@@ -149,7 +145,7 @@ function Login() {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* زر تسجيل الدخول */}
               <div className="!mt-8">
                 <button
                   type="submit"
@@ -171,7 +167,7 @@ function Login() {
                 </button>
               </div>
 
-              {/* Register Link */}
+              {/* رابط التسجيل */}
               <div
                 className="mt-8 p-4 rounded-lg text-center"
                 style={{ backgroundColor: "#D6E4F0" }}
