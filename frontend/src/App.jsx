@@ -8,6 +8,8 @@ import Home from "./components/home/Home";
 import About from "./components/about/About";
 import Contact from "./components/contact/Contact";
 import OrderGasCylinders from "./components/services/OrderGasCylinders";
+import HeatingSystem from "./components/services/HeatingSystem";
+import RegisterAgency from "./components/RegisterAgency/RegisterAgency";
 
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/order-gas" element={<OrderGasCylinders />} />
+        <Route path="/agency" element={<RegisterAgency />} />
+        <Route path="/HeatingSystem" element={<HeatingSystem />} />
       </Routes>
     </Router>
   );

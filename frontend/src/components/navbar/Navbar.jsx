@@ -67,7 +67,7 @@ function Navbar() {
             </li>
             <li>
               <Link
-                to="/register"
+                to="/agency"
                 className="hover:text-[#007bff] text-gray-500 block font-semibold text-[15px]"
               >
                 سجل كوكالة
