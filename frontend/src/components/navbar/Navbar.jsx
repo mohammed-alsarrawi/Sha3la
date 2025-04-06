@@ -49,15 +49,15 @@ function Navbar() {
                 </li>
                 <li>
                   <Link
-                    to="/heating-maintenance"
+                    to="/HeatingSystem"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-right"
                   >
-                    صيانة أنظمة التدفئة
+                    أنظمة التدفئة المركزية
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/tank-refill"
+                    to="/GasFilling"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-right"
                   >
                     تعبئة خزانات الغاز

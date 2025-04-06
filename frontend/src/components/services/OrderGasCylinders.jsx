@@ -118,7 +118,7 @@ const OrderGasCylinders = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-16 mt-12">
+    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-16 ">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-blue-800 mb-3">

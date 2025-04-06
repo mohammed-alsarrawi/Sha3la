@@ -10,6 +10,7 @@ import Contact from "./components/contact/Contact";
 import OrderGasCylinders from "./components/services/OrderGasCylinders";
 import HeatingSystem from "./components/services/HeatingSystem";
 import RegisterAgency from "./components/RegisterAgency/RegisterAgency";
+import GasFilling from "./components/services/GasFilling";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/order-gas" element={<OrderGasCylinders />} />
         <Route path="/agency" element={<RegisterAgency />} />
         <Route path="/HeatingSystem" element={<HeatingSystem />} />
+        <Route path="/GasFilling" element={<GasFilling />} />
       </Routes>
     </Router>
   );

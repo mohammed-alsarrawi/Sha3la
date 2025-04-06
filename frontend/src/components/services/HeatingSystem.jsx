@@ -8,57 +8,6 @@ const HeatingSystem = () => {
       dir="rtl"
     >
       <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6">
-        {/* العمود الأيسر: نموذج تواصل ثابت */}
-        <div className="lg:w-1/3 bg-white p-6 rounded shadow sticky top-4 self-start">
-          <h2 className="text-2xl font-bold text-blue-800 mb-4 text-right">
-            طلب معاينة / تواصل معنا
-          </h2>
-          <form className="space-y-4 text-right">
-            <div>
-              <label className="block mb-1 text-gray-700">الاسم الكامل:</label>
-              <input
-                type="text"
-                placeholder="أدخل اسمك"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-gray-700">رقم الهاتف:</label>
-              <input
-                type="tel"
-                placeholder="أدخل رقم هاتفك"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-gray-700">
-                البريد الإلكتروني:
-              </label>
-              <input
-                type="email"
-                placeholder="example@domain.com"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-gray-700">
-                رسالتك أو طلبك:
-              </label>
-              <textarea
-                rows="3"
-                placeholder="اكتب أي ملاحظات أو تفاصيل إضافية"
-                className="w-full p-2 border border-gray-300 rounded"
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-            >
-              إرسال الطلب
-            </button>
-          </form>
-        </div>
-
         {/* العمود الأيمن: المحتوى التفصيلي */}
         <div className="lg:w-2/3 bg-white p-6 rounded shadow overflow-y-auto">
           {/* مقدمة الصفحة */}
@@ -94,19 +43,19 @@ const HeatingSystem = () => {
             </ul>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
               <img
-                src=""
+                src="https://greenwell-eg.com/wp-content/uploads/2024/03/%D8%A3%D9%86%D8%B8%D9%85%D8%A9-%D8%A7%D9%84%D8%AA%D8%AF%D9%81%D8%A6%D8%A9-%D8%A7%D9%84%D9%85%D8%B1%D9%83%D8%B2%D9%8A%D8%A9-%D8%A8%D8%A7%D9%84%D8%BA%D8%A7%D8%B2-%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%B9%D9%8A.jpeg"
                 alt="الغلاية"
-                className="w-full h-auto rounded shadow"
+                className="w-full h-40 rounded shadow"
               />
               <img
-                src=""
+                src="https://mdsgrouptr.com/wp-content/uploads/2023/11/%D8%AA%D8%B5%D9%85%D9%8A%D9%85-%D8%A8%D8%AF%D9%88%D9%86-%D8%B9%D9%86%D9%88%D8%A7%D9%86.jpg"
                 alt="المشعاعات"
-                className="w-full h-auto rounded shadow"
+                className="w-full h-40 rounded shadow"
               />
               <img
-                src=""
+                src="https://static.labeb.com/images/articles/345/central-min637640483204216178-w960.jpg"
                 alt="الأنابيب"
-                className="w-full h-auto rounded shadow"
+                className="w-full h-40 rounded shadow"
               />
             </div>
           </section>
@@ -326,6 +275,57 @@ const HeatingSystem = () => {
               التواصل معنا عبر نموذج الطلب المتوفر على الجانب الأيسر.
             </p>
           </section>
+        </div>
+        
+        {/* العمود الأيسر: نموذج تواصل ثابت */}
+        <div className="lg:w-1/3 bg-white p-6 rounded shadow sticky top-4 self-start">
+          <h2 className="text-2xl font-bold text-blue-800 mb-4 text-right">
+            طلب معاينة / تواصل معنا
+          </h2>
+          <form className="space-y-4 text-right">
+            <div>
+              <label className="block mb-1 text-gray-700">الاسم الكامل:</label>
+              <input
+                type="text"
+                placeholder="أدخل اسمك"
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-gray-700">رقم الهاتف:</label>
+              <input
+                type="tel"
+                placeholder="أدخل رقم هاتفك"
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-gray-700">
+                البريد الإلكتروني:
+              </label>
+              <input
+                type="email"
+                placeholder="example@domain.com"
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-gray-700">
+                رسالتك أو طلبك:
+              </label>
+              <textarea
+                rows="3"
+                placeholder="اكتب أي ملاحظات أو تفاصيل إضافية"
+                className="w-full p-2 border border-gray-300 rounded"
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            >
+              إرسال الطلب
+            </button>
+          </form>
         </div>
       </div>
     </div>
