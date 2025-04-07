@@ -1,5 +1,143 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    message: "",
+    serviceType: "استفسار", // القيمة الافتراضية
+    requestedDate: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      // تأكد من استبدال URL بالعنوان المناسب للـ backend
+      const response = await axios.post("http://localhost:5000/api/heating-service-requests", formData);
+      setSuccess(response.data.message);
+      setFormData({
+        fullName: "",
+        phone: "",
+        email: "",
+        message: "",
+        serviceType: "استفسار",
+        requestedDate: "",
+      });
+    } catch (err) {
+      setError("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة لاحقاً.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="lg:w-1/3 bg-white p-6 rounded shadow sticky top-4 self-start">
+      <h2 className="text-2xl font-bold text-blue-800 mb-4 text-right">
+        طلب استفسار / معاينة / صيانة
+      </h2>
+      <form className="space-y-4 text-right" onSubmit={handleSubmit}>
+        <div>
+          <label className="block mb-1 text-gray-700">الاسم الكامل:</label>
+          <input
+            type="text"
+            name="fullName"
+            placeholder="أدخل اسمك"
+            value={formData.fullName}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-gray-700">رقم الهاتف:</label>
+          <input
+            type="tel"
+            name="phone"
+            placeholder="أدخل رقم هاتفك"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-gray-700">البريد الإلكتروني:</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="example@domain.com"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-gray-700">نوع الخدمة:</label>
+          <select
+            name="serviceType"
+            value={formData.serviceType}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+            required
+          >
+            <option value="استفسار">استفسار</option>
+            <option value="معاينة">طلب معاينة</option>
+            <option value="صيانة">صيانة</option>
+          </select>
+        </div>
+        <div>
+          <label className="block mb-1 text-gray-700">
+            تاريخ الطلب (اختياري):
+          </label>
+          <input
+            type="date"
+            name="requestedDate"
+            value={formData.requestedDate}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-gray-700">
+            رسالتك أو استفسارك:
+          </label>
+          <textarea
+            name="message"
+            rows="3"
+            placeholder="اكتب أي ملاحظات أو تفاصيل إضافية"
+            value={formData.message}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          ></textarea>
+        </div>
+        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+        >
+          {loading ? "جاري الإرسال..." : "إرسال الطلب"}
+        </button>
+      </form>
+    </div>
+  );
+};
 
 const HeatingSystem = () => {
   return (
@@ -8,7 +146,8 @@ const HeatingSystem = () => {
       dir="rtl"
     >
       <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6">
-        {/* العمود الأيمن: المحتوى التفصيلي */}
+        {/* في بيئة RTL، العنصر الأول يظهر على اليمين */}
+        {/* المحتوى التفصيلي لنظام التدفئة (سيظهر على اليمين) */}
         <div className="lg:w-2/3 bg-white p-6 rounded shadow overflow-y-auto">
           {/* مقدمة الصفحة */}
           <section className="mb-8">
@@ -259,7 +398,7 @@ const HeatingSystem = () => {
             </ul>
           </section>
 
-          {/* خاتمة */}
+          {/* الخاتمة */}
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-blue-800 mb-4 text-right">
               الخلاصة
@@ -272,61 +411,13 @@ const HeatingSystem = () => {
             </p>
             <p className="text-gray-700 text-right">
               إذا كنت بحاجة إلى استشارة فنية أو عروض أسعار مفصلة، لا تتردد في
-              التواصل معنا عبر نموذج الطلب المتوفر على الجانب الأيسر.
+              التواصل معنا عبر نموذج الطلب الموجود على الجانب الأيسر.
             </p>
           </section>
         </div>
-        
-        {/* العمود الأيسر: نموذج تواصل ثابت */}
-        <div className="lg:w-1/3 bg-white p-6 rounded shadow sticky top-4 self-start">
-          <h2 className="text-2xl font-bold text-blue-800 mb-4 text-right">
-            طلب معاينة / تواصل معنا
-          </h2>
-          <form className="space-y-4 text-right">
-            <div>
-              <label className="block mb-1 text-gray-700">الاسم الكامل:</label>
-              <input
-                type="text"
-                placeholder="أدخل اسمك"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-gray-700">رقم الهاتف:</label>
-              <input
-                type="tel"
-                placeholder="أدخل رقم هاتفك"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-gray-700">
-                البريد الإلكتروني:
-              </label>
-              <input
-                type="email"
-                placeholder="example@domain.com"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-gray-700">
-                رسالتك أو طلبك:
-              </label>
-              <textarea
-                rows="3"
-                placeholder="اكتب أي ملاحظات أو تفاصيل إضافية"
-                className="w-full p-2 border border-gray-300 rounded"
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-            >
-              إرسال الطلب
-            </button>
-          </form>
-        </div>
+
+        {/* في بيئة RTL، العنصر الثاني سيظهر على اليسار */}
+        <ContactForm />
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/orderRoutes'); // استيراد الـ ro
 const authRoutes = require("./routes/authRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
 const agencyRoutes = require("./routes/agencyRoutes");
+const serviceRequestRoutes = require("./routes/heatingServiceRequestRoutes");
 // تعريف التطبيق بعد تحميل المتغيرات
 const app = express();
 
@@ -53,6 +54,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
 app.use("/api", orderRoutes);
 app.use("/api/agency", agencyRoutes);
+app.use("/api/heating-service-requests", serviceRequestRoutes);
+
 // الاتصال بقاعدة البيانات وتشغيل السيرفر
 mongoose
   .connect(process.env.MONGO_URI) // تأكد من أنك قد حددت MONGO_URI في ملف .env
