@@ -23,6 +23,12 @@ const HeatingServiceRequestSchema = new mongoose.Schema({
     required: true,
     enum: ["استفسار", "معاينة", "صيانة"],
   },
+  status: {
+  type: String,
+  enum: ["قيد الانتظار", "قيد التنفيذ", "منتهي", "مرفوض"],
+  default: "قيد الانتظار"
+},
+
   // تاريخ الطلب يمكن استخدامه لتحديد التاريخ المرغوب أو التاريخ الذي تم فيه الطلب
   requestedDate: {
     type: Date,

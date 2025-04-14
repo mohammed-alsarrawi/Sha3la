@@ -1,26 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
+// Sample images, replace with actual paths
+import slider1 from "../../assets/slider1.jpg";
+import gasImagee from "../../assets/gasImageee.jpg";
+import truckImage from "../../assets/truck.jpg";
+import gas from "../../assets/gas.jpg";
+import radiateurImage from "../../assets/radiateur.jpg";
+import truck2Image from "../../assets/truck2.jpg";
 
 const Home = () => {
   // Hero Section (Slider)
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
     {
-      img: "https://plus.unsplash.com/premium_photo-1661964131234-fda88ca041c5?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "غاز عالي الجودة، مباشر من المصنع!",
-      description:
-        "في الأردن، نضمن أعلى معايير الأمان والجودة لإمدادات الغاز الخاصة بك، مباشرة من المصانع الموثوقة.",
+      img: "https://cgway.net/wp-content/uploads/2023/12/living-rooms-decor-02.jpg",
+      title: "حلول التدفئة المتميزة",
+      description: "الحياة الأفضل تبدأ بمنزل مريح يمكنك أن تقوم بضبطه وصيانته",
       link: "#",
     },
     {
-      img: "./src/assets/slider1.jpg", // Replace with actual image path
+      img: gasImagee,
       title: "اطلب غازك الآن، سيتم توصيله بسرعة!",
       description:
         "سواء كنت في عمان، إربد، أو العقبة، نحن نوصل أسطوانات الغاز إلى باب منزلك بسرعة وأمان.",
       link: "#",
     },
     {
-      img: "./src/assets/truck.jpg", // Replace with actual image path
+      img: truckImage,
       title: "توصيل الغاز الموثوق به في جميع أنحاء الأردن",
       description:
         "أسطول الشاحنات لدينا يضمن التوصيل في الوقت المناسب إلى المنازل، والأعمال التجارية، والمطاعم في جميع أنحاء الأردن.",
@@ -40,11 +47,17 @@ const Home = () => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
+  // Use effect to change slide every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000);
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [currentSlide]);
+
   // Scroll to Services Section function
   const scrollToServices = () => {
-    document
-      .getElementById("services-section")
-      .scrollIntoView({ behavior: "smooth" });
+    document.getElementById("services-section").scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   // Our Services Section
@@ -53,7 +66,7 @@ const Home = () => {
       id: 1,
       title: "طلب أسطوانة الغاز",
       description: "اطلب أسطوانة الغاز بسهولة واستلمها على باب منزلك في دقائق.",
-      image: "./src/assets/image.png", // Replace with actual image path
+      image: gas,
       altText: "أسطوانة الغاز",
       linkTo: "/order-gas",
       buttonText: "اطلب الآن",
@@ -63,7 +76,7 @@ const Home = () => {
       title: "أنظمة التدفئة المركزية بالغاز",
       description:
         "تركيب وصيانة محترفة لأنظمة التدفئة المركزية بالغاز للمنازل والأعمال التجارية.",
-      image: "./src/assets/radiateur.jpg", // Replace with actual image path
+      image: radiateurImage,
       altText: "نظام التدفئة",
       linkTo: "/HeatingSystem",
       buttonText: "اعرف المزيد",
@@ -72,7 +85,7 @@ const Home = () => {
       id: 3,
       title: "حجز تعبئة الغاز المركزي",
       description: "احجز مركبة تعبئة الغاز لمنزلك أو مطعمك بسرعة وأمان.",
-      image: "./src/assets/truck.jpg", // Replace with actual image path
+      image: truck2Image,
       altText: "تعبئة الغاز",
       linkTo: "/GasFilling",
       buttonText: "احجز الآن",
@@ -167,35 +180,101 @@ const Home = () => {
     <div>
       {/* Hero Section */}
       <div className="relative w-full">
+        {/* Slider Container */}
         <div className="relative h-80 overflow-hidden rounded-lg md:h-[500px]">
-          <div
-            className={`absolute block w-full h-full transition-opacity duration-700 ease-in-out ${
-              currentSlide === 0 ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <img
-              src={slides[0].img}
-              className="w-full h-full object-cover"
-              alt="شريحة 1"
-            />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
-              <h2 className="text-3xl font-bold mb-4">{slides[0].title}</h2>
-              <p className="text-lg max-w-2xl mx-auto mb-6">
-                {slides[0].description}
-              </p>
-              <button
-                onClick={scrollToServices}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
-              >
-                اطلب الآن
-              </button>
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute block w-full h-full transition-opacity duration-700 ease-in-out ${
+                currentSlide === index ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={slide.img}
+                className="w-full h-full object-cover"
+                alt={`شريحة ${index + 1}`}
+              />
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
+                <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>
+                <p className="text-lg max-w-2xl mx-auto mb-6">
+                  {slide.description}
+                </p>
+                <button
+                  onClick={scrollToServices}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+                >
+                  اطلب الآن
+                </button>
+              </div>
             </div>
-          </div>
-          {/* More slides go here */}
+          ))}
         </div>
+
+        {/* Slider Indicators */}
+        <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              className={`w-3 h-3 rounded-full ${
+                currentSlide === index ? "bg-blue-600" : "bg-gray-400"
+              }`}
+              onClick={() => goToSlide(index)}
+              aria-label={`شريحة ${index + 1}`}
+            ></button>
+          ))}
+        </div>
+
+        {/* Slider Controls */}
+        <button
+          type="button"
+          className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+          onClick={prevSlide}
+        >
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 1 1 5l4 4"
+              />
+            </svg>
+            <span className="sr-only">السابق</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+          onClick={nextSlide}
+        >
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 9 5 5 1 1"
+              />
+            </svg>
+            <span className="sr-only">التالي</span>
+          </span>
+        </button>
       </div>
 
-      {/* Our Services Section - with ID for scrolling */}
+      {/* Our Services Section */}
       <div id="services-section" className="bg-gray-100 py-16">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
@@ -241,7 +320,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Why Choose Us Section - with unified background color */}
+      {/* Why Choose Us Section */}
       <section className="bg-gray-100 py-12">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">

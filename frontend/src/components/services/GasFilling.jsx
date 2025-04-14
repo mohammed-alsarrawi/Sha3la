@@ -47,17 +47,52 @@ const GasFilling = () => {
   // التعامل مع تقديم النموذج
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // تحقق من البيانات قبل الإرسال
+    console.log("بيانات النموذج قبل الإرسال:", {
+      ...formData,
+      quantity: parseInt(formData.quantity),
+    });
+
     if (parseInt(formData.quantity) < 200) {
-      alert("الكمية يجب أن تكون 200 لتر أو أكثر للتوصيل المجاني");
+      alert("الكمية يجب أن تكون 200 لتر أو أكثر");
       return;
     }
+
     setIsSubmitting(true);
     try {
-      await axios.post("http://localhost:5000/api/vehicles/request", formData);
-      alert("تم تقديم طلب تعبئة الغاز بنجاح!");
+      console.log(formData)
+      const response = await axios.post(
+        "http://localhost:5000/api/gas-filling-orders",
+        {
+          street: formData.street,
+          phone:formData.phone,
+          area: formData.area,
+          date: formData.date,
+          timePreference: formData.timePreference,
+          quantity: parseInt(formData.quantity),
+        
+          
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("الرد من الخادم:", response.data);
+      alert("تم تقديم الطلب بنجاح!");
     } catch (error) {
-      console.error(error);
-      alert("حدث خطأ أثناء تقديم الطلب");
+      console.error("تفاصيل الخطأ الكاملة:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config,
+      });
+
+      alert(error.response?.data?.message || "حدث خطأ غير متوقع");
     } finally {
       setIsSubmitting(false);
     }

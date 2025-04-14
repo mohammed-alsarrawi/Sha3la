@@ -1,7 +1,6 @@
-// models/Agency.js
+// backend/models/Agency.js
 const mongoose = require("mongoose");
 
-// تعريف الـ Schema للوكالة
 const agencySchema = new mongoose.Schema(
   {
     agencyName: {
@@ -32,14 +31,18 @@ const agencySchema = new mongoose.Schema(
       trim: true,
     },
     licenseImage: {
-      type: String, // سيكون مسار الصورة المخزنة في المجلد
+      type: String, // سيحتوي على مسار الصورة أو URL
       required: true,
     },
+    // حقل الحالة الخاص بطلب تسجيل الوكالة
+    status: {
+      type: String,
+      enum: ["قيد الانتظار", "مقبولة", "مرفوضة"],
+      default: "قيد الانتظار",
+    },
   },
-  { timestamps: true } // لتسجيل وقت الإنشاء والتحديث
+  { timestamps: true }
 );
 
-// إنشاء الـ Model
 const Agency = mongoose.model("Agency", agencySchema);
-
 module.exports = Agency;

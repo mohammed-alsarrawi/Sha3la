@@ -1,42 +1,53 @@
-// controllers/orderController.js
-const Order = require("../models/Order"); // استيراد الـ Model
+// backend/controllers/OrderController.js
+const Order = require("../models/Order");
 
-// دالة لمعالجة الطلبات الجديدة
+// دالة إنشاء الطلب الجديد
 const createOrder = async (req, res) => {
-  const { quantity, address, contact, paymentMethod, notes, location } =
-    req.body;
-
-  // التحقق من وجود البيانات المطلوبة
-  if (!quantity || !address || !contact || !paymentMethod) {
-    return res.status(400).json({ message: "يرجى ملء كافة الحقول المطلوبة" });
-  }
-
   try {
-    // إنشاء الطلب في قاعدة البيانات
-    const newOrder = new Order({
-      quantity,
-      address,
-      contact,
-      paymentMethod,
-      notes,
-      location,
-    });
-
-    // حفظ الطلب في قاعدة البيانات
-    await newOrder.save();
-
-    // إرجاع استجابة للمستخدم
-    return res.status(201).json({
-      message: "تم تقديم الطلب بنجاح",
-      order: newOrder,
-    });
+    // يمكن إضافة منطق للمصادقة أو التحقق من بيانات المستخدم هنا إذا لزم الأمر
+    const orderData = req.body; // تأكد من أن body يحتوي على الحقول المطلوبة في موديل Order
+    const order = new Order(orderData);
+    await order.save();
+    res.status(201).json({ message: "تم تأكيد الطلب بنجاح!", order });
   } catch (error) {
-    console.error(error);
-    return res
+    console.error("Error in createOrder:", error);
+    res
       .status(500)
       .json({ message: "حدث خطأ أثناء تقديم الطلب", error: error.message });
   }
 };
 
-// تصدير الدالة
-module.exports = { createOrder };
+// دالة جلب الطلبات
+const getOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.error("Error in getOrders:", error);
+    res
+      .status(500)
+      .json({ message: "حدث خطأ أثناء جلب الطلبات", error: error.message });
+  }
+};
+
+// دالة تحديث حالة الطلب
+const updateOrderStatus = async (req, res) => {
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status },
+      { new: true }
+    );
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "الطلب غير موجود" });
+    }
+    res.status(200).json({ message: "تم تحديث الحالة", order: updatedOrder });
+  } catch (error) {
+    console.error("Error in updateOrderStatus:", error);
+    res
+      .status(500)
+      .json({ message: "حدث خطأ أثناء تحديث الحالة", error: error.message });
+  }
+};
+
+module.exports = { createOrder, getOrders, updateOrderStatus };

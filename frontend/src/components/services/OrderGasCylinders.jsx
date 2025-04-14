@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // استيراد SweetAlert
-import axios from "axios"; // تأكد من أنك قمت بتثبيت axios
-
+import Swal from "sweetalert2"; // Import SweetAlert
+import axios from "axios"; // Make sure axios is installed
 import sylinder from "../../assets/cylinder1.jpg";
 
 const OrderGasCylinders = () => {
+  // Removed 'phone' field from initial state since we use 'contact' for the number.
   const [formData, setFormData] = useState({
     quantity: 1,
     address: "",
-    contact: "",
+    contact: "", // This field will act as the phone number input.
     paymentMethod: "payOnDelivery",
     notes: "",
   });
@@ -34,17 +34,15 @@ const OrderGasCylinders = () => {
       setIsLocating(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLocation(
-            `خط العرض: ${position.coords.latitude.toFixed(
-              6
-            )}, خط الطول: ${position.coords.longitude.toFixed(6)}`
-          );
+          const coordsText = `خط العرض: ${position.coords.latitude.toFixed(
+            6
+          )}, خط الطول: ${position.coords.longitude.toFixed(6)}`;
+          setLocation(coordsText);
           setIsLocating(false);
-
-          // عرض تنبيه عند تحديد الموقع بنجاح
+          // Use the local variable "coordsText" for alerting instead of state value immediately
           Swal.fire({
             title: "تم تحديد موقعك بنجاح!",
-            text: `الموقع: ${location}`,
+            text: `الموقع: ${coordsText}`,
             icon: "success",
             confirmButtonText: "موافق",
           });
@@ -52,11 +50,10 @@ const OrderGasCylinders = () => {
         (error) => {
           setLocation("حدث خطأ أثناء محاولة تحديد الموقع.");
           setIsLocating(false);
-
-          // عرض تنبيه في حال حدوث خطأ أثناء تحديد الموقع
+          console.error("Geolocation error:", error);
           Swal.fire({
             title: "حدث خطأ",
-            text: "لم نتمكن من تحديد موقعك. حاول مرة أخرى.",
+            text: `لم نتمكن من تحديد موقعك. سبب الخطأ: ${error.message}`,
             icon: "error",
             confirmButtonText: "موافق",
           });
@@ -64,8 +61,6 @@ const OrderGasCylinders = () => {
       );
     } else {
       setLocation("متصفحك لا يدعم تحديد المواقع.");
-
-      // عرض تنبيه إذا كان المتصفح لا يدعم تحديد المواقع
       Swal.fire({
         title: "غير مدعوم",
         text: "متصفحك لا يدعم تحديد المواقع.",
@@ -79,35 +74,45 @@ const OrderGasCylinders = () => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Prepare the order data.
+    // If the backend requires a "phone" field, we'll map it to "contact" value.
     const orderData = {
       quantity: formData.quantity,
       address: formData.address,
-      contact: formData.contact,
+      contact: formData.contact, // This field is used for the contact number
+      // Map contact to phone as well in case the backend expects "phone"
+      phone: formData.contact,
       paymentMethod: formData.paymentMethod,
       notes: formData.notes,
-      location: location, // إرسال الموقع الجغرافي
+      location: location, // Send the geographic location if available
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/order-gas", // تأكد من الـ API الصحيح في الـ backend
+        "http://localhost:5000/api/order-gas", // Ensure this matches your backend API URL
         orderData,
-        { withCredentials: true } // إرسال الكوكيز مع الطلب
+        { withCredentials: true } // Send cookies with the request
       );
 
       setIsLoading(false);
-
-      // عرض تنبيه عند تقديم الطلب بنجاح
       Swal.fire({
         title: "تم تأكيد الطلب!",
         text: `عدد الأسطوانات: ${formData.quantity}`,
         icon: "success",
         confirmButtonText: "موافق",
       });
+      // Optionally, clear the form fields here:
+      setFormData({
+        quantity: 1,
+        address: "",
+        contact: "",
+        paymentMethod: "payOnDelivery",
+        notes: "",
+      });
+      setLocation("");
     } catch (error) {
       setIsLoading(false);
-
-      // عرض تنبيه في حالة حدوث خطأ
+      console.error("Error in order submission:", error);
       Swal.fire({
         title: "حدث خطأ",
         text: "لم يتم تقديم الطلب بنجاح. حاول مرة أخرى.",
@@ -118,7 +123,7 @@ const OrderGasCylinders = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-16 ">
+    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-blue-800 mb-3">
@@ -127,13 +132,13 @@ const OrderGasCylinders = () => {
           <div className="w-24 h-1 bg-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-600 max-w-2xl mx-auto">
             اطلب أسطوانات الغاز بكل سهولة وسيتم توصيلها إلى باب منزلك في أسرع
-            وقت
+            وقت.
           </p>
         </div>
 
         <div className="max-w-5xl mx-auto overflow-hidden rounded-2xl shadow-2xl">
           <div className="flex flex-col lg:flex-row bg-white">
-            {/* صورة وتفاصيل المنتج */}
+            {/* Section: Product Image & Details */}
             <div className="lg:w-2/5 bg-blue-800 text-white p-8 flex flex-col justify-between">
               <div>
                 <h3 className="text-2xl font-bold mb-6">أسطوانة الغاز</h3>
@@ -178,15 +183,14 @@ const OrderGasCylinders = () => {
               </div>
             </div>
 
-            {/* نموذج الطلب */}
+            {/* Section: Order Form */}
             <div className="lg:w-3/5 p-8">
               <h3 className="text-2xl font-bold text-gray-800 mb-6 text-right">
                 معلومات الطلب
               </h3>
-
               <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* كمية الأسطوانات */}
+                  {/* Quantity Input */}
                   <div>
                     <label
                       htmlFor="quantity"
@@ -239,13 +243,13 @@ const OrderGasCylinders = () => {
                     </div>
                   </div>
 
-                  {/* رقم الاتصال */}
+                  {/* Contact Input (used for phone number) */}
                   <div>
                     <label
                       htmlFor="contact"
                       className="block text-gray-700 font-medium mb-2"
                     >
-                      رقم الهاتف
+                      رقم الاتصال
                     </label>
                     <input
                       type="tel"
@@ -254,13 +258,13 @@ const OrderGasCylinders = () => {
                       value={formData.contact}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                      placeholder="أدخل رقم هاتفك"
+                      placeholder="أدخل رقم الاتصال"
                       required
                     />
                   </div>
                 </div>
 
-                {/* العنوان */}
+                {/* Address Input */}
                 <div>
                   <label
                     htmlFor="address"
@@ -280,7 +284,7 @@ const OrderGasCylinders = () => {
                   ></textarea>
                 </div>
 
-                {/* الموقع الجغرافي */}
+                {/* Location (Geolocation) */}
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-gray-700 font-medium">
@@ -318,7 +322,7 @@ const OrderGasCylinders = () => {
                   </div>
                 </div>
 
-                {/* ملاحظات إضافية */}
+                {/* Notes Input */}
                 <div>
                   <label
                     htmlFor="notes"
@@ -337,7 +341,7 @@ const OrderGasCylinders = () => {
                   ></textarea>
                 </div>
 
-                {/* طرق الدفع */}
+                {/* Payment Method */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-3">
                     طريقة الدفع
@@ -356,7 +360,7 @@ const OrderGasCylinders = () => {
                         value="payOnDelivery"
                         checked={formData.paymentMethod === "payOnDelivery"}
                         onChange={handleChange}
-                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 hidden"
+                        className="hidden"
                       />
                       <div
                         className={`w-5 h-5 rounded-full mr-3 border flex items-center justify-center ${
@@ -378,7 +382,6 @@ const OrderGasCylinders = () => {
                         </span>
                       </div>
                     </label>
-
                     <label
                       className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.paymentMethod === "payOnline"
@@ -392,7 +395,7 @@ const OrderGasCylinders = () => {
                         value="payOnline"
                         checked={formData.paymentMethod === "payOnline"}
                         onChange={handleChange}
-                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 hidden"
+                        className="hidden"
                       />
                       <div
                         className={`w-5 h-5 rounded-full mr-3 border flex items-center justify-center ${
@@ -417,7 +420,7 @@ const OrderGasCylinders = () => {
                   </div>
                 </div>
 
-                {/* زر الإرسال */}
+                {/* Submit Button */}
                 <div className="pt-4">
                   <button
                     type="submit"

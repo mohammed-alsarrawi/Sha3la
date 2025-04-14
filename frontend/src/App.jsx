@@ -11,6 +11,9 @@ import OrderGasCylinders from "./components/services/OrderGasCylinders";
 import HeatingSystem from "./components/services/HeatingSystem";
 import RegisterAgency from "./components/RegisterAgency/RegisterAgency";
 import GasFilling from "./components/services/GasFilling";
+import Dashboard from "./components/dashboard/Dashboard";
+import SuperAdminDashboard from "./components/SuperAdminDashboard/SuperAdminDashboard";
+
 
 
 function App() {
@@ -27,6 +30,9 @@ function App() {
         <Route path="/agency" element={<RegisterAgency />} />
         <Route path="/HeatingSystem" element={<HeatingSystem />} />
         <Route path="/GasFilling" element={<GasFilling />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
+        <Route path="/SuperAdminDashboard/*" element={<SuperAdminDashboard />} />
+
       </Routes>
     </Router>
   );

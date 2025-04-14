@@ -1,9 +1,16 @@
-// routes/orderRoutes.js
+// backend/routes/orderRoutes.js
 const express = require("express");
-const { createOrder } = require("../controllers/orderController"); // استيراد الكونترولر
 const router = express.Router();
+const OrderController = require("../controllers/orderController");
+const { protect } = require("../middlewares/authMiddleware");
 
-// مسار تقديم طلب أسطوانات الغاز
-router.post("/order-gas", createOrder);
+// لإنشاء طلب جديد - حماية الطريق باستخدام Middleware
+router.post("/order-gas", protect, OrderController.createOrder);
+
+// لجلب كافة الطلبات - يمكنك إضافة حماية إذا كانت مطلوبة
+router.get("/orders", protect, OrderController.getOrders);
+
+// لتحديث حالة الطلب
+router.put("/orders/:id", protect, OrderController.updateOrderStatus);
 
 module.exports = router;

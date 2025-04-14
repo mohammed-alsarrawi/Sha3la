@@ -1,3 +1,4 @@
+// backend/server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -5,11 +6,17 @@ const multer = require("multer");
 dotenv.config(); // تحميل متغيرات البيئة في البداية
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const orderRoutes = require('./routes/orderRoutes'); // استيراد الـ route
+
+
+// Import routes
+const orderRoutes = require("./routes/orderRoutes"); // استيراد الـ route
 const authRoutes = require("./routes/authRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
 const agencyRoutes = require("./routes/agencyRoutes");
-const serviceRequestRoutes = require("./routes/heatingServiceRequestRoutes");
+const heatingServiceRequestRoutes = require("./routes/heatingServiceRequestRoutes");
+const statsRoutes = require("./routes/statsRoutes");
+const gasFillingOrderRoutes = require("./routes/gasFillingOrderRoutes");
+
 // تعريف التطبيق بعد تحميل المتغيرات
 const app = express();
 
@@ -17,7 +24,7 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:5173", // تأكد من أن هذا هو عنوان الواجهة الأمامية
-    credentials: true, // للسماح بإرسال الكوكيز مع الطلبات
+credentials: true, // للسماح بإرسال الكوكيز مع الطلبات
   })
 );
 
@@ -31,7 +38,6 @@ const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir); // إذا لم يكن موجودًا، أنشئه
 }
-
 
 // إعداد مسار التخزين للملفات
 const storage = multer.diskStorage({
@@ -53,8 +59,12 @@ app.use(cookieParser()); // استخدام الكوكيز
 app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
 app.use("/api", orderRoutes);
-app.use("/api/agency", agencyRoutes);
-app.use("/api/heating-service-requests", serviceRequestRoutes);
+app.use("/api", agencyRoutes);
+app.use("/api", heatingServiceRequestRoutes);
+app.use("/api", statsRoutes);
+app.use("/api/gas-filling-orders", gasFillingOrderRoutes);
+
+
 
 // الاتصال بقاعدة البيانات وتشغيل السيرفر
 mongoose

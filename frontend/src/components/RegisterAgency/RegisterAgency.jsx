@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert
+import axios from "axios"; // Ensure axios is installed
 
 const RegisterAgency = () => {
+  // State for form fields
   const [formData, setFormData] = useState({
     agencyName: "",
     address: "",
@@ -11,11 +13,13 @@ const RegisterAgency = () => {
     licenseImage: null,
   });
 
+  // State for multi-step progress
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [filePreview, setFilePreview] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
 
-  // Handle input changes
+  // Handle input changes for text fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -41,12 +45,55 @@ const RegisterAgency = () => {
     }
   };
 
-  // Handle form submission
+  // Handle geolocation to capture agency's coordinates (as "latitude,longitude")
+  const handleLocationClick = () => {
+    if (navigator.geolocation) {
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude.toFixed(6);
+          const longitude = position.coords.longitude.toFixed(6);
+          const coordsText = `${latitude},${longitude}`;
+
+          // Update the formData with the coordinate string
+          setFormData((prev) => ({
+            ...prev,
+            location: coordsText,
+          }));
+          setIsLocating(false);
+          Swal.fire({
+            title: "تم تحديد موقعك بنجاح!",
+            text: `الإحداثيات: ${coordsText}`,
+            icon: "success",
+            confirmButtonText: "موافق",
+          });
+        },
+        (error) => {
+          setIsLocating(false);
+          console.error("Geolocation error:", error);
+          Swal.fire({
+            title: "حدث خطأ",
+            text: `لم نتمكن من تحديد موقعك. سبب الخطأ: ${error.message}`,
+            icon: "error",
+            confirmButtonText: "موافق",
+          });
+        }
+      );
+    } else {
+      Swal.fire({
+        title: "غير مدعوم",
+        text: "متصفحك لا يدعم تحديد المواقع.",
+        icon: "warning",
+        confirmButtonText: "موافق",
+      });
+    }
+  };
+
+  // Handle form submission and send data to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Create FormData object to send the form data with the file
     const formDataToSend = new FormData();
     formDataToSend.append("agencyName", formData.agencyName);
     formDataToSend.append("address", formData.address);
@@ -57,7 +104,7 @@ const RegisterAgency = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/agency/register", // Backend API URL
+        "http://localhost:5000/api/agency/register", // Backend API URL for agency registration
         formDataToSend,
         {
           headers: {
@@ -65,12 +112,22 @@ const RegisterAgency = () => {
           },
         }
       );
-
       setIsSubmitting(false);
-      alert("تم تسجيل الوكالة بنجاح!");
+      Swal.fire({
+        title: "تم تسجيل الوكالة بنجاح!",
+        icon: "success",
+        confirmButtonText: "موافق",
+      });
+      // Optionally clear the form or navigate away
     } catch (error) {
       setIsSubmitting(false);
-      alert("حدث خطأ أثناء تقديم الطلب");
+      console.error("Error in agency registration:", error);
+      Swal.fire({
+        title: "حدث خطأ",
+        text: "حدث خطأ أثناء تقديم الطلب. حاول مرة أخرى.",
+        icon: "error",
+        confirmButtonText: "موافق",
+      });
     }
   };
 
@@ -98,14 +155,12 @@ const RegisterAgency = () => {
               >
                 <div
                   className={`w-10 h-10 flex items-center justify-center rounded-full border-2 ${
-                    step >= 1
-                      ? "border-blue-600 bg-blue-100"
-                      : "border-gray-300"
+                    step >= 1 ? "border-blue-600 bg-blue-100" : "border-gray-300"
                   } mb-2`}
                 >
                   1
                 </div>
-                <span className="text-sm"> المعلومات الأساسية</span>
+                <span className="text-sm">المعلومات الأساسية</span>
               </div>
               <div
                 className={`flex-1 border-t-2 self-start mt-5 mx-4 ${
@@ -119,21 +174,19 @@ const RegisterAgency = () => {
               >
                 <div
                   className={`w-10 h-10 flex items-center justify-center rounded-full border-2 ${
-                    step >= 2
-                      ? "border-blue-600 bg-blue-100"
-                      : "border-gray-300"
+                    step >= 2 ? "border-blue-600 bg-blue-100" : "border-gray-300"
                   } mb-2`}
                 >
                   2
                 </div>
-                <span className="text-sm">الوثائق والتأكيد </span>
+                <span className="text-sm">الوثائق والتأكيد</span>
               </div>
             </div>
           </div>
 
           {/* Form Steps */}
           <form onSubmit={handleSubmit} className="p-8 pt-0" dir="rtl">
-            {/* Step 1 */}
+            {/* Step 1: Basic Information */}
             <div className={step === 1 ? "block" : "hidden"}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -145,7 +198,7 @@ const RegisterAgency = () => {
                     name="agencyName"
                     value={formData.agencyName}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
                     placeholder="أدخل اسم الوكالة"
                     required
                   />
@@ -160,7 +213,7 @@ const RegisterAgency = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
                     placeholder="أدخل رقم الهاتف"
                     required
                   />
@@ -175,7 +228,7 @@ const RegisterAgency = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
                     placeholder="example@domain.com"
                     required
                   />
@@ -185,27 +238,27 @@ const RegisterAgency = () => {
                   <label className="block text-lg font-semibold text-gray-700 mb-2">
                     الموقع الجغرافي
                   </label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                    placeholder="المدينة، المنطقة"
+                  <button
+                    type="button"
+                    onClick={handleLocationClick}
+                    disabled={isLocating}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right bg-blue-100 hover:bg-blue-200"
                     required
-                  />
+                  >
+                    {isLocating ? "جاري تحديد الموقع..." : "تحديد الموقع تلقائياً"}
+                  </button>
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-lg font-semibold text-gray-700 mb-2">
-                    عنوان الوكالة بالتفصيل
+                    العنوان بالتفصيل
                   </label>
                   <textarea
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
                     rows="3"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
                     placeholder="أدخل العنوان التفصيلي للوكالة"
                     required
                   ></textarea>
@@ -220,8 +273,8 @@ const RegisterAgency = () => {
                     !formData.agencyName ||
                     !formData.phoneNumber ||
                     !formData.email ||
-                    !formData.location ||
-                    !formData.address
+                    !formData.address ||
+                    !formData.location
                   }
                   className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -230,13 +283,12 @@ const RegisterAgency = () => {
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2: License & Confirmation */}
             <div className={step === 2 ? "block" : "hidden"}>
               <div className="mb-8">
                 <label className="block text-lg font-semibold text-gray-700 mb-3">
                   صورة الترخيص أو التصريح
                 </label>
-
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors duration-300">
                   {filePreview ? (
                     <div className="relative">
@@ -299,9 +351,8 @@ const RegisterAgency = () => {
                   معلومات هامة
                 </h3>
                 <p className="text-blue-700">
-                  يجب أن يكون الترخيص ساري المفعول وصادر من الجهات المختصة. سيتم
-                  مراجعة طلبك خلال 3-5 أيام عمل وسيتم إخطارك بالنتيجة عبر البريد
-                  الإلكتروني.
+                  يجب أن يكون الترخيص ساري المفعول وصادر من الجهات المختصة.
+                  سيتم مراجعة طلبك خلال 3-5 أيام عمل وسيتم إخطارك بالنتيجة عبر البريد الإلكتروني.
                 </p>
               </div>
 
@@ -309,14 +360,14 @@ const RegisterAgency = () => {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300"
+                  className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                 >
                   <span className="ml-1">←</span> السابق
                 </button>
                 <button
                   type="submit"
                   disabled={!formData.licenseImage || isSubmitting}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                  className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
                   {isSubmitting ? (
                     <>

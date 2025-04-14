@@ -28,7 +28,8 @@ const ContactForm = () => {
     setError("");
     try {
       // تأكد من استبدال URL بالعنوان المناسب للـ backend
-      const response = await axios.post("http://localhost:5000/api/heating-service-requests", formData);
+      const response = await axios.post("http://localhost:5000/api/heating-service-requests", formData, { withCredentials: true }
+);
       setSuccess(response.data.message);
       setFormData({
         fullName: "",
