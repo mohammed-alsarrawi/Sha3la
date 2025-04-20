@@ -1,20 +1,37 @@
-// middlewares/upload.js
+// backend/middlewares/upload.js
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
-// تحديد مكان حفظ الملفات (الصور)
+// 1) تأكد أنّ مجلد uploads موجود، وإن لم يكن قم بإنشائه:
+const uploadDir = path.join(__dirname, "../public/uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// 2) إعداد التخزين
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, "../uploads"); // حدد المجلد الذي سيتم حفظ الصور فيه
-    cb(null, uploadPath); // حدد المجلد
+  destination: (req, file, cb) => {
+    // نحفظ كل الصور في public/uploads
+    cb(null, uploadDir);
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // إضافة اسم فريد مع الامتداد المناسب
+  filename: (req, file, cb) => {
+    // نستخدم fieldname و timestamp و الامتداد الأصلي
+    const ext = path.extname(file.originalname);
+    const name = file.fieldname + "-" + Date.now() + ext;
+    cb(null, name);
   },
 });
 
-// تفعيل multer مع الإعدادات
-const upload = multer({ storage: storage });
+// 3) فلتر للنوع (قبول الصور فقط)
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("الملف ليس صورة"), false);
+  }
+};
 
+// 4) صدّر multer المكوَّن
+const upload = multer({ storage, fileFilter });
 module.exports = upload;

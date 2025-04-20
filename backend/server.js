@@ -16,6 +16,7 @@ const agencyRoutes = require("./routes/agencyRoutes");
 const heatingServiceRequestRoutes = require("./routes/heatingServiceRequestRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 const gasFillingOrderRoutes = require("./routes/gasFillingOrderRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 // تعريف التطبيق بعد تحميل المتغيرات
 const app = express();
@@ -63,9 +64,9 @@ app.use("/api", agencyRoutes);
 app.use("/api", heatingServiceRequestRoutes);
 app.use("/api", statsRoutes);
 app.use("/api/gas-filling-orders", gasFillingOrderRoutes);
+app.use("/api", userRoutes);
 
-
-
+app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 // الاتصال بقاعدة البيانات وتشغيل السيرفر
 mongoose
   .connect(process.env.MONGO_URI) // تأكد من أنك قد حددت MONGO_URI في ملف .env

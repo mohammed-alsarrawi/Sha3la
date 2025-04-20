@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     password: String,
     role: { type: String, enum: ["admin", "agency", "user"], default: "user" },
     isApproved: { type: Boolean, default: false },
+    avatar: { type: String },
   },
   { timestamps: true }
 );

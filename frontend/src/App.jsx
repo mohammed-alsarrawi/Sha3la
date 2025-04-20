@@ -1,6 +1,8 @@
 // App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
 import Navbar from "./components/navbar/Navbar"; 
@@ -13,12 +15,22 @@ import RegisterAgency from "./components/RegisterAgency/RegisterAgency";
 import GasFilling from "./components/services/GasFilling";
 import Dashboard from "./components/dashboard/Dashboard";
 import SuperAdminDashboard from "./components/SuperAdminDashboard/SuperAdminDashboard";
-
+import Profile from "./components/profile/profile";
+import Logout from "./components/logout/Loguot";  
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 
 function App() {
   return (
     <Router>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        pauseOnHover
+        rtl
+      />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -31,8 +43,12 @@ function App() {
         <Route path="/HeatingSystem" element={<HeatingSystem />} />
         <Route path="/GasFilling" element={<GasFilling />} />
         <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/SuperAdminDashboard/*" element={<SuperAdminDashboard />} />
-
+        <Route path="/Profile" element={<Profile />} />
+        <Route
+          path="/SuperAdminDashboard/*"
+          element={<SuperAdminDashboard />}
+        />
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </Router>
   );
