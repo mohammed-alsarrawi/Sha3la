@@ -114,7 +114,7 @@ const RegisterAgency = () => {
       );
       setIsSubmitting(false);
       Swal.fire({
-        title: "تم تسجيل الوكالة بنجاح!",
+        title: "تم ارسال طلبك بنجاح",
         icon: "success",
         confirmButtonText: "موافق",
       });

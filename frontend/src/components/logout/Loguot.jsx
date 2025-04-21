@@ -17,7 +17,7 @@ export default function Logout() {
       } catch (err) {
         console.error("Logout error:", err);
       } finally {
-        navigate("/login");
+        navigate("/");
       }
     })();
   }, [navigate]);

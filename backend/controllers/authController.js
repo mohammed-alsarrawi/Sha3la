@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, phone } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser)
@@ -14,6 +14,7 @@ const register = async (req, res) => {
       email,
       password: hashedPassword,
       role,
+      phone,
       isApproved: role === "agency" ? false : true,
     });
     await newUser.save();
@@ -26,13 +27,17 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email }); // تم تعديل السطر هنا
+    const user = await User.findOne({ email }); 
     if (!user) return res.status(404).json({ message: "User not found" });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ message: "البريد الإلكتروني أو كلمة المرور غير صحيحة" });
     if (user.role === "agency" && !user.isApproved) {
-      return res.status(403).json({ message: "Agency not approved yet" });
+      return res
+        .status(403)
+        .json({ message: "لم يتم الموافقة على حساب الوكالة بعد" });
     }
 
     // إنشاء التوكن
@@ -52,12 +57,27 @@ const login = async (req, res) => {
 
     // إرسال الرد
     res.status(200).json({
-      message: "Login successful",
+      message: "تم تسجيل الدخول بنجاح",
       user: { id: user._id, name: user.name, role: user.role },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "حدث خطأ في الخادم", error: error.message });
   }
 };
 
-module.exports = { register, login };
+const logout = (req, res) => {
+  // نمسح الكوكيز اللي اسمه "token"
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+  });
+  // نرجّع رسالة نجاح
+  return res.status(200).json({ message: "تم تسجيل الخروج بنجاح" });
+};
+
+
+
+module.exports = { register, login ,logout};

@@ -4,11 +4,9 @@ import axios from "axios"; // Make sure axios is installed
 import sylinder from "../../assets/cylinder1.jpg";
 
 const OrderGasCylinders = () => {
-  // Removed 'phone' field from initial state since we use 'contact' for the number.
   const [formData, setFormData] = useState({
     quantity: 1,
     address: "",
-    contact: "", // This field will act as the phone number input.
     paymentMethod: "payOnDelivery",
     notes: "",
   });
@@ -39,7 +37,6 @@ const OrderGasCylinders = () => {
           )}, خط الطول: ${position.coords.longitude.toFixed(6)}`;
           setLocation(coordsText);
           setIsLocating(false);
-          // Use the local variable "coordsText" for alerting instead of state value immediately
           Swal.fire({
             title: "تم تحديد موقعك بنجاح!",
             text: `الموقع: ${coordsText}`,
@@ -74,14 +71,9 @@ const OrderGasCylinders = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Prepare the order data.
-    // If the backend requires a "phone" field, we'll map it to "contact" value.
     const orderData = {
       quantity: formData.quantity,
       address: formData.address,
-      contact: formData.contact, // This field is used for the contact number
-      // Map contact to phone as well in case the backend expects "phone"
-      phone: formData.contact,
       paymentMethod: formData.paymentMethod,
       notes: formData.notes,
       location: location, // Send the geographic location if available
@@ -101,11 +93,9 @@ const OrderGasCylinders = () => {
         icon: "success",
         confirmButtonText: "موافق",
       });
-      // Optionally, clear the form fields here:
       setFormData({
         quantity: 1,
         address: "",
-        contact: "",
         paymentMethod: "payOnDelivery",
         notes: "",
       });
@@ -123,14 +113,17 @@ const OrderGasCylinders = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-16">
+    <main
+      className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-16"
+      dir="rtl"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-blue-800 mb-3">
+          <h2 className="text-4xl font-bold text-blue-800 mb-3" dir="rtl">
             طلب أسطوانات الغاز
           </h2>
           <div className="w-24 h-1 bg-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto" dir="rtl">
             اطلب أسطوانات الغاز بكل سهولة وسيتم توصيلها إلى باب منزلك في أسرع
             وقت.
           </p>
@@ -141,15 +134,19 @@ const OrderGasCylinders = () => {
             {/* Section: Product Image & Details */}
             <div className="lg:w-2/5 bg-blue-800 text-white p-8 flex flex-col justify-between">
               <div>
-                <h3 className="text-2xl font-bold mb-6">أسطوانة الغاز</h3>
+                <h3 className="text-2xl font-bold mb-6" dir="rtl">
+                  أسطوانة الغاز
+                </h3>
                 <div className="bg-blue-900 bg-opacity-30 p-4 rounded-xl mb-8 backdrop-blur-sm">
                   <img
                     src={sylinder}
                     alt="أسطوانة الغاز"
                     className="w-full h-auto rounded-lg object-cover mb-6"
                   />
-                  <h4 className="text-xl font-semibold mb-2">المواصفات:</h4>
-                  <ul className="space-y-2 text-blue-100">
+                  <h4 className="text-xl font-semibold mb-2" dir="rtl">
+                    المواصفات:
+                  </h4>
+                  <ul className="space-y-2 text-blue-100" dir="rtl">
                     <li className="flex items-center">
                       <span className="mr-2">✓</span> أسطوانة غاز منزلية قياسية
                     </li>
@@ -185,7 +182,10 @@ const OrderGasCylinders = () => {
 
             {/* Section: Order Form */}
             <div className="lg:w-3/5 p-8">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 text-right">
+              <h3
+                className="text-2xl font-bold text-gray-800 mb-6 text-right"
+                dir="rtl"
+              >
                 معلومات الطلب
               </h3>
               <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
@@ -195,6 +195,7 @@ const OrderGasCylinders = () => {
                     <label
                       htmlFor="quantity"
                       className="block text-gray-700 font-medium mb-2"
+                      dir="rtl"
                     >
                       الكمية
                     </label>
@@ -243,25 +244,7 @@ const OrderGasCylinders = () => {
                     </div>
                   </div>
 
-                  {/* Contact Input (used for phone number) */}
-                  <div>
-                    <label
-                      htmlFor="contact"
-                      className="block text-gray-700 font-medium mb-2"
-                    >
-                      رقم الاتصال
-                    </label>
-                    <input
-                      type="tel"
-                      id="contact"
-                      name="contact"
-                      value={formData.contact}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                      placeholder="أدخل رقم الاتصال"
-                      required
-                    />
-                  </div>
+                  {/* Removed Contact (Phone number) Input */}
                 </div>
 
                 {/* Address Input */}
@@ -269,6 +252,7 @@ const OrderGasCylinders = () => {
                   <label
                     htmlFor="address"
                     className="block text-gray-700 font-medium mb-2"
+                    dir="rtl"
                   >
                     العنوان بالتفصيل
                   </label>
@@ -287,7 +271,10 @@ const OrderGasCylinders = () => {
                 {/* Location (Geolocation) */}
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <label className="block text-gray-700 font-medium">
+                    <label
+                      className="block text-gray-700 font-medium"
+                      dir="rtl"
+                    >
                       تحديد الموقع الجغرافي
                     </label>
                     <button
@@ -327,6 +314,7 @@ const OrderGasCylinders = () => {
                   <label
                     htmlFor="notes"
                     className="block text-gray-700 font-medium mb-2"
+                    dir="rtl"
                   >
                     ملاحظات إضافية (اختياري)
                   </label>
@@ -343,7 +331,10 @@ const OrderGasCylinders = () => {
 
                 {/* Payment Method */}
                 <div>
-                  <label className="block text-gray-700 font-medium mb-3">
+                  <label
+                    className="block text-gray-700 font-medium mb-3"
+                    dir="rtl"
+                  >
                     طريقة الدفع
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -457,7 +448,7 @@ const OrderGasCylinders = () => {
                   </button>
                 </div>
 
-                <p className="text-center text-sm text-gray-500 pt-2">
+                <p className="text-center text-sm text-gray-500 pt-2" dir="rtl">
                   بالنقر على زر التأكيد، أنت توافق على شروط الخدمة وسياسة
                   التوصيل
                 </p>

@@ -9,7 +9,6 @@ const {
 } = require("../controllers/userController");
 const { protect, authorize } = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/upload");           // ← هنا
-
 const router = express.Router();
 
 // admin endpoints...

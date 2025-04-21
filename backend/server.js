@@ -50,6 +50,7 @@ const storage = multer.diskStorage({
   },
 });
 
+
 // إعداد multer باستخدام storage
 const upload = multer({ storage });
 
@@ -65,8 +66,7 @@ app.use("/api", heatingServiceRequestRoutes);
 app.use("/api", statsRoutes);
 app.use("/api/gas-filling-orders", gasFillingOrderRoutes);
 app.use("/api", userRoutes);
-
-app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 // الاتصال بقاعدة البيانات وتشغيل السيرفر
 mongoose
   .connect(process.env.MONGO_URI) // تأكد من أنك قد حددت MONGO_URI في ملف .env
