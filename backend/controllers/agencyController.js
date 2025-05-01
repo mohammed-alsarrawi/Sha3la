@@ -2,21 +2,61 @@
 const Agency = require("../models/Agency");
 
 // دالة تسجيل وكالة جديدة
+// const registerAgency = async (req, res) => {
+//   const { agencyName, address, phoneNumber, email, location } = req.body;
+//   const licenseImage = req.file ? req.file.path : null;
+//   console.log(req.body);
+//   try {
+//     console.log("Received data:", req.body);
+//     console.log("Received file:", req.file);
+//     const newAgency = new Agency({
+//       agencyName,
+//       address,
+//       phoneNumber,
+//       email,
+//       location,
+//       licenseImage,
+//       // الحالة افتراضية "قيد الانتظار"
+//     });
+//     await newAgency.save();
+//     res.status(201).json({ message: "تم تسجيل الوكالة بنجاح" });
+//   } catch (error) {
+//     console.error("Error in registerAgency:", error);
+//     res
+//       .status(500)
+//       .json({ message: "حدث خطأ أثناء تسجيل الوكالة", error: error.message });
+//   }
+// };
 const registerAgency = async (req, res) => {
   const { agencyName, address, phoneNumber, email, location } = req.body;
-  const licenseImage = req.file ? req.file.path : null;
+
+  // 1) الصورة مطلوبة
+  if (!req.file) {
+    return res.status(400).json({ message: "الصورة الترخيصية مطلوبة" });
+  }
+
+  // 2) خزن فقط اسم الملف، لا المسار الكامل
+  const licenseImage = req.file.filename;
+
   try {
-    console.log("Received data:", req.body);
-    console.log("Received file:", req.file);
+    // 3) تفادي تكرار البريد
+    const exists = await Agency.findOne({ email });
+    if (exists) {
+      return res
+        .status(400)
+        .json({ message: "هذا البريد الإلكتروني مسجل بالفعل" });
+    }
+
     const newAgency = new Agency({
       agencyName,
       address,
       phoneNumber,
       email,
       location,
-      licenseImage,
-      // الحالة افتراضية "قيد الانتظار"
+      licenseImage, // <-- هنا اسم الملف فقط
+      status: "قيد الانتظار",
     });
+
     await newAgency.save();
     res.status(201).json({ message: "تم تسجيل الوكالة بنجاح" });
   } catch (error) {
@@ -26,11 +66,11 @@ const registerAgency = async (req, res) => {
       .json({ message: "حدث خطأ أثناء تسجيل الوكالة", error: error.message });
   }
 };
-
 // دالة لجلب طلبات تسجيل الوكالات
 const getAgencyRequests = async (req, res) => {
   try {
-    const requests = await Agency.find().sort({ createdAt: -1 });
+    const requests = await Agency.find().sort({ createdAt: -1 }).lean();
+    console.log(requests);
     res.status(200).json({ requests });
   } catch (error) {
     res
@@ -50,6 +90,7 @@ const updateAgencyStatus = async (req, res) => {
       { status: req.body.status },
       { new: true }
     );
+
     if (!updatedAgency) {
       return res.status(404).json({ message: "الوكالة غير موجودة" });
     }

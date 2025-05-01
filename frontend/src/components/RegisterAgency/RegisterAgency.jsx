@@ -155,7 +155,9 @@ const RegisterAgency = () => {
               >
                 <div
                   className={`w-10 h-10 flex items-center justify-center rounded-full border-2 ${
-                    step >= 1 ? "border-blue-600 bg-blue-100" : "border-gray-300"
+                    step >= 1
+                      ? "border-blue-600 bg-blue-100"
+                      : "border-gray-300"
                   } mb-2`}
                 >
                   1
@@ -174,7 +176,9 @@ const RegisterAgency = () => {
               >
                 <div
                   className={`w-10 h-10 flex items-center justify-center rounded-full border-2 ${
-                    step >= 2 ? "border-blue-600 bg-blue-100" : "border-gray-300"
+                    step >= 2
+                      ? "border-blue-600 bg-blue-100"
+                      : "border-gray-300"
                   } mb-2`}
                 >
                   2
@@ -245,7 +249,9 @@ const RegisterAgency = () => {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right bg-blue-100 hover:bg-blue-200"
                     required
                   >
-                    {isLocating ? "جاري تحديد الموقع..." : "تحديد الموقع تلقائياً"}
+                    {isLocating
+                      ? "جاري تحديد الموقع..."
+                      : "تحديد الموقع تلقائياً"}
                   </button>
                 </div>
 
@@ -290,6 +296,20 @@ const RegisterAgency = () => {
                   صورة الترخيص أو التصريح
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors duration-300">
+                  {/* <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        licenseImage: e.target.files[0],
+                      });
+                      const reader = new FileReader();
+                      reader.onload = () => setFilePreview(reader.result);
+                      reader.readAsDataURL(e.target.files[0]);
+                    }}
+                    required
+                  /> */}
                   {filePreview ? (
                     <div className="relative">
                       <img
@@ -351,8 +371,9 @@ const RegisterAgency = () => {
                   معلومات هامة
                 </h3>
                 <p className="text-blue-700">
-                  يجب أن يكون الترخيص ساري المفعول وصادر من الجهات المختصة.
-                  سيتم مراجعة طلبك خلال 3-5 أيام عمل وسيتم إخطارك بالنتيجة عبر البريد الإلكتروني.
+                  يجب أن يكون الترخيص ساري المفعول وصادر من الجهات المختصة. سيتم
+                  مراجعة طلبك خلال 3-5 أيام عمل وسيتم إخطارك بالنتيجة عبر البريد
+                  الإلكتروني.
                 </p>
               </div>
 

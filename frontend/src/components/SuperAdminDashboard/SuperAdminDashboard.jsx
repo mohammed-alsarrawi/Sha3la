@@ -67,7 +67,7 @@ const SuperAdminDashboard = () => {
             element={
               <div className="text-center">
                 <h1 className="text-3xl font-bold mb-4">
-                  مرحباً بكم في لوحة إدارة السوبر أدمن
+                  مرحباً بكم في لوحة الإدارة 
                 </h1>
                 <p className="text-gray-700">
                   يمكنك من خلال هذه اللوحة متابعة طلبات الخدمات، إدارة

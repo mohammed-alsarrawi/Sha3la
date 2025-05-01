@@ -7,6 +7,7 @@ const Dashboard = () => {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [confirmCancel, setConfirmCancel] = useState(null); // For cancel confirmation
 
   const fetchOrders = async () => {
     try {
@@ -43,11 +44,17 @@ const Dashboard = () => {
         )
       );
       setLoading(false);
+      // Reset cancel confirmation
+      setConfirmCancel(null);
     } catch (err) {
       console.error("Error updating status:", err);
       setError("خطأ في تحديث الحالة");
       setLoading(false);
     }
+  };
+
+  const handleCancelClick = (orderId) => {
+    setConfirmCancel(orderId);
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -76,6 +83,8 @@ const Dashboard = () => {
         return "bg-orange-100 text-orange-800";
       case "منتهي":
         return "bg-blue-100 text-blue-800";
+      case "ملغي":
+        return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -215,6 +224,7 @@ const Dashboard = () => {
                 <option value="تمت الموافقة">تمت الموافقة</option>
                 <option value="قيد التنفيذ">قيد التنفيذ</option>
                 <option value="منتهي">منتهي</option>
+                <option value="ملغي">ملغي</option>
               </select>
 
               {/* Refresh Button */}
@@ -323,45 +333,75 @@ const Dashboard = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <button
-                            onClick={() =>
-                              updateStatus(order._id, "تمت الموافقة")
-                            }
-                            className={`inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 ${
-                              order.status === "تمت الموافقة"
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            disabled={order.status === "تمت الموافقة"}
-                          >
-                            اعتماد
-                          </button>
-                          <button
-                            onClick={() =>
-                              updateStatus(order._id, "قيد التنفيذ")
-                            }
-                            className={`inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 ${
-                              order.status === "قيد التنفيذ"
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            disabled={order.status === "قيد التنفيذ"}
-                          >
-                            تنفيذ
-                          </button>
-                          <button
-                            onClick={() => updateStatus(order._id, "منتهي")}
-                            className={`inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 ${
-                              order.status === "منتهي"
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            disabled={order.status === "منتهي"}
-                          >
-                            إنهاء
-                          </button>
-                        </div>
+                        {order.status === "ملغي" ? (
+                          <div className="text-gray-500 text-xs">
+                            تم إلغاء الطلب
+                          </div>
+                        ) : confirmCancel === order._id ? (
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <div className="text-red-600 font-medium text-xs mb-1">
+                              هل أنت متأكد من إلغاء هذا الطلب؟
+                            </div>
+                            <button
+                              onClick={() => updateStatus(order._id, "ملغي")}
+                              className="inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700"
+                            >
+                              نعم، إلغاء
+                            </button>
+                            <button
+                              onClick={() => setConfirmCancel(null)}
+                              className="inline-flex items-center justify-center px-3 py-1 border border-gray-300 text-xs font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50"
+                            >
+                              تراجع
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <button
+                              onClick={() =>
+                                updateStatus(order._id, "تمت الموافقة")
+                              }
+                              className={`inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 ${
+                                order.status === "تمت الموافقة"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              disabled={order.status === "تمت الموافقة"}
+                            >
+                              اعتماد
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateStatus(order._id, "قيد التنفيذ")
+                              }
+                              className={`inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 ${
+                                order.status === "قيد التنفيذ"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              disabled={order.status === "قيد التنفيذ"}
+                            >
+                              تنفيذ
+                            </button>
+                            <button
+                              onClick={() => updateStatus(order._id, "منتهي")}
+                              className={`inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 ${
+                                order.status === "منتهي"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              disabled={order.status === "منتهي"}
+                            >
+                              إنهاء
+                            </button>
+                            <button
+                              onClick={() => handleCancelClick(order._id)}
+                              className="inline-flex items-center justify-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700"
+                            >
+                              إلغاء
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}

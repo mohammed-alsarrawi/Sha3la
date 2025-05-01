@@ -70,4 +70,75 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getOrders, updateOrderStatus };
+
+const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "يجب تسجيل الدخول أولاً" });
+    }
+
+    // 1) قراءة الصفحة والحد؛ افتراضياً page=1, limit=5
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.max(1, parseInt(req.query.limit) || 5);
+
+    // 2) إجمالي عدد الوثائق لهذا المستخدم
+    const total = await Order.countDocuments({ userId });
+
+    // 3) جلب الصفحة المطلوبة
+    const orders = await Order.find({ userId })
+      .sort({ createdAt: -1 })
+      .select("quantity status createdAt address notes")  // اختياري
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    // 4) حساب إجمالي الصفحات
+    const totalPages = Math.ceil(total / limit);
+
+    // 5) إرجاع البيانات مع الميتاداتا
+    return res.status(200).json({
+      orders,
+      pagination: {
+        total,       // إجمالي عدد الطلبات
+        page,        // الصفحة الحالية
+        limit,       // عدد الطلبات في كل صفحة
+        totalPages,  // إجمالي الصفحات
+      },
+    });
+  } catch (error) {
+    console.error("Error in getUserOrders:", error);
+    return res
+      .status(500)
+      .json({ message: "خطأ أثناء جلب طلبات المستخدم", error: error.message });
+  }
+};
+
+
+// بعد التعاريف الحالية:
+const cancelOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "الطلب غير موجود" });
+    }
+    if (order.status !== "قيد الانتظار") {
+      return res.status(400).json({ message: "لا يمكن إلغاء الطلب بعد قبوله" });
+    }
+    order.status = "ملغي";
+    await order.save();
+    return res.status(200).json({ message: "تم إلغاء الطلب بنجاح", order });
+  } catch (error) {
+    console.error("Error in cancelOrder:", error);
+    return res.status(500).json({ message: "حدث خطأ أثناء إلغاء الطلب", error: error.message });
+  }
+};
+
+
+module.exports = {
+  createOrder,
+  getOrders,
+  updateOrderStatus,
+  getUserOrders,
+  cancelOrder,
+};

@@ -13,4 +13,10 @@ router.get("/orders", protect, OrderController.getOrders);
 // لتحديث حالة الطلب
 router.put("/orders/:id", protect, OrderController.updateOrderStatus);
 
+// **جلب طلبات المستخدم الحالي**  
+router.get("/orders/me", protect, OrderController.getUserOrders);
+
+router.delete("/orders/:id", protect, OrderController.cancelOrder);
+
+
 module.exports = router;
