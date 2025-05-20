@@ -272,27 +272,34 @@ const HeatingOrders = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         {order.status !== "قيد التنفيذ" && (
                           <button
-                            onClick={() =>
-                              updateStatus(order._id, "قيد التنفيذ")
-                            }
-                            className="text-orange-600 hover:text-orange-900 ml-4"
+                            onClick={() => updateStatus(order._id, "قيد التنفيذ")}
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-orange-700 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all duration-200 ml-4"
                           >
+                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
                             تنفيذ
                           </button>
                         )}
                         {order.status !== "منتهي" && (
                           <button
                             onClick={() => updateStatus(order._id, "منتهي")}
-                            className="text-green-600 hover:text-green-900 ml-4"
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-200 transition-all duration-200 ml-4"
                           >
+                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
                             إنهاء
                           </button>
                         )}
                         {order.status !== "مرفوض" && (
                           <button
                             onClick={() => updateStatus(order._id, "مرفوض")}
-                            className="text-red-600 hover:text-red-900"
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200"
                           >
+                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                             رفض
                           </button>
                         )}

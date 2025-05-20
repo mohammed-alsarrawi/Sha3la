@@ -30,10 +30,34 @@ const RegisterAgency = () => {
 
   // Handle file input changes
   const handleFileChange = (e) => {
-    if (e.target.files[0]) {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({
+          title: "خطأ في حجم الملف",
+          text: "حجم الملف يجب أن لا يتجاوز 5 ميجابايت",
+          icon: "error",
+          confirmButtonText: "حسناً"
+        });
+        return;
+      }
+
+      // Check file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+          title: "خطأ في نوع الملف",
+          text: "نوع الملف غير مدعوم. يرجى اختيار ملف بصيغة JPG, PNG, أو PDF",
+          icon: "error",
+          confirmButtonText: "حسناً"
+        });
+        return;
+      }
+
       setFormData({
         ...formData,
-        licenseImage: e.target.files[0],
+        licenseImage: file,
       });
 
       // Create preview URL for the image
@@ -41,7 +65,7 @@ const RegisterAgency = () => {
       reader.onload = () => {
         setFilePreview(reader.result);
       };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -94,39 +118,143 @@ const RegisterAgency = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Validate form data
+    if (!formData.agencyName || !formData.phoneNumber || !formData.email || !formData.address || !formData.location || !formData.licenseImage) {
+      Swal.fire({
+        title: "خطأ في البيانات",
+        text: "يرجى التأكد من ملء جميع الحقول المطلوبة",
+        icon: "error",
+        confirmButtonText: "حسناً"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Validate phone number format
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      Swal.fire({
+        title: "خطأ في رقم الهاتف",
+        text: "يرجى إدخال رقم هاتف صحيح مكون من 10 أرقام",
+        icon: "error",
+        confirmButtonText: "حسناً"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      Swal.fire({
+        title: "خطأ في البريد الإلكتروني",
+        text: "يرجى إدخال بريد إلكتروني صحيح",
+        icon: "error",
+        confirmButtonText: "حسناً"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     const formDataToSend = new FormData();
-    formDataToSend.append("agencyName", formData.agencyName);
-    formDataToSend.append("address", formData.address);
-    formDataToSend.append("phoneNumber", formData.phoneNumber);
-    formDataToSend.append("email", formData.email);
-    formDataToSend.append("location", formData.location);
+    formDataToSend.append("agencyName", formData.agencyName.trim());
+    formDataToSend.append("address", formData.address.trim());
+    formDataToSend.append("phoneNumber", formData.phoneNumber.trim());
+    formDataToSend.append("email", formData.email.trim());
+    formDataToSend.append("location", formData.location.trim());
     formDataToSend.append("licenseImage", formData.licenseImage);
+
+    // Log the data being sent
+    console.log("Form Data being sent:", {
+      agencyName: formData.agencyName.trim(),
+      address: formData.address.trim(),
+      phoneNumber: formData.phoneNumber.trim(),
+      email: formData.email.trim(),
+      location: formData.location.trim(),
+      licenseImage: formData.licenseImage ? formData.licenseImage.name : null
+    });
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/agency/register", // Backend API URL for agency registration
+        "http://localhost:5000/api/agency/register",
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Required for sending files
+            "Content-Type": "multipart/form-data",
           },
+          withCredentials: true
         }
       );
+      
       setIsSubmitting(false);
       Swal.fire({
         title: "تم ارسال طلبك بنجاح",
+        text: "سيتم مراجعة طلبك والرد عليك قريباً",
         icon: "success",
-        confirmButtonText: "موافق",
+        confirmButtonText: "موافق"
+      }).then(() => {
+        // Reset form
+        setFormData({
+          agencyName: "",
+          address: "",
+          phoneNumber: "",
+          email: "",
+          location: "",
+          licenseImage: null,
+        });
+        setFilePreview(null);
+        setStep(1);
       });
-      // Optionally clear the form or navigate away
     } catch (error) {
       setIsSubmitting(false);
       console.error("Error in agency registration:", error);
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("Error request:", error.request);
+      } else {
+        console.error("Error message:", error.message);
+      }
+      
+      let errorMessage = "حدث خطأ أثناء تقديم الطلب. حاول مرة أخرى.";
+      if (error.response) {
+        // Check for specific error messages from the server
+        if (error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        } else {
+          switch (error.response.status) {
+            case 400:
+              errorMessage = "يرجى التأكد من صحة جميع البيانات المدخلة";
+              break;
+            case 409:
+              errorMessage = "هذا البريد الإلكتروني مسجل مسبقاً";
+              break;
+            case 413:
+              errorMessage = "حجم الملف كبير جداً. الحد الأقصى هو 5 ميجابايت";
+              break;
+            default:
+              errorMessage = error.response.data.message || errorMessage;
+          }
+        }
+      }
+
       Swal.fire({
         title: "حدث خطأ",
-        text: "حدث خطأ أثناء تقديم الطلب. حاول مرة أخرى.",
+        text: errorMessage,
         icon: "error",
-        confirmButtonText: "موافق",
+        confirmButtonText: "حسناً"
+      }).then(() => {
+        // If it's an email already registered error, clear the email field
+        if (error.response?.data?.message?.includes("البريد الإلكتروني مسجل")) {
+          setFormData(prev => ({
+            ...prev,
+            email: ""
+          }));
+        }
       });
     }
   };
@@ -296,20 +424,6 @@ const RegisterAgency = () => {
                   صورة الترخيص أو التصريح
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors duration-300">
-                  {/* <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        licenseImage: e.target.files[0],
-                      });
-                      const reader = new FileReader();
-                      reader.onload = () => setFilePreview(reader.result);
-                      reader.readAsDataURL(e.target.files[0]);
-                    }}
-                    required
-                  /> */}
                   {filePreview ? (
                     <div className="relative">
                       <img

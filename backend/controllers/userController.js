@@ -62,10 +62,10 @@ exports.updateMe = async (req, res) => {
     allowed.forEach((field) => {
       if (req.body[field] != null) updates[field] = req.body[field];
     });
-    
- if (req.file) {
-   updates.avatar = `/uploads/${req.file.filename}`;
- }
+
+    if (req.file) {
+      updates.avatar = `/uploads/${req.file.filename}`;
+    }
     // if updating password, hash it
     if (updates.password) {
       const salt = await bcrypt.genSalt(10);

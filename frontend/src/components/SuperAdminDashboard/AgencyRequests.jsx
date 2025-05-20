@@ -257,7 +257,21 @@ const AgencyRequests = () => {
                           <img
                             src={`http://localhost:5000/uploads/${req.licenseImage}`}
                             alt="ترخيص الوكالة"
-                            className="h-16 w-16 object-cover rounded"
+                            className="h-16 w-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => {
+                              Swal.fire({
+                                imageUrl: `http://localhost:5000/uploads/${req.licenseImage}`,
+                                imageAlt: 'ترخيص الوكالة',
+                                width: 'auto',
+                                padding: '2em',
+                                showConfirmButton: false,
+                                showCloseButton: true,
+                                customClass: {
+                                  closeButton: 'text-gray-500 hover:text-gray-700',
+                                  container: 'bg-white rounded-lg shadow-xl'
+                                }
+                              });
+                            }}
                           />
                         ) : (
                           <span className="text-gray-400 italic">لا يوجد</span>
@@ -271,16 +285,22 @@ const AgencyRequests = () => {
                         {req.status !== "مقبولة" && (
                           <button
                             onClick={() => updateStatus(req._id, "مقبولة")}
-                            className="text-green-600 hover:text-green-900 ml-4"
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-200 transition-all duration-200 ml-4"
                           >
+                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
                             قبول
                           </button>
                         )}
                         {req.status !== "مرفوضة" && (
                           <button
                             onClick={() => updateStatus(req._id, "مرفوضة")}
-                            className="text-red-600 hover:text-red-900"
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200"
                           >
+                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                             رفض
                           </button>
                         )}

@@ -273,34 +273,75 @@ const UserManagement = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2 space-x-reverse">
-                          <select
-                            value={user.role}
-                            onChange={(e) =>
-                              updateRole(user._id, e.target.value)
-                            }
-                            className="block w-32 rounded-md border border-gray-300 shadow-sm py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ml-3"
-                          >
-                            <option value="admin">مدير</option>
-                            <option value="agency">وكالة</option>
-                            <option value="user">مستخدم</option>
-                          </select>
+                          <div className="relative inline-block text-right">
+                            <button
+                              type="button"
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200"
+                              onClick={() => {
+                                const dropdown = document.getElementById(`dropdown-${user._id}`);
+                                dropdown.classList.toggle('hidden');
+                              }}
+                            >
+                              <span>تغيير الدور</span>
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                            <div
+                              id={`dropdown-${user._id}`}
+                              className="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+                            >
+                              <div className="py-1" role="menu" aria-orientation="vertical">
+                                <button
+                                  onClick={() => {
+                                    updateRole(user._id, "user");
+                                    document.getElementById(`dropdown-${user._id}`).classList.add('hidden');
+                                  }}
+                                  className="w-full text-right px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 flex items-center"
+                                  role="menuitem"
+                                >
+                                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                  مستخدم
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    updateRole(user._id, "agency");
+                                    document.getElementById(`dropdown-${user._id}`).classList.add('hidden');
+                                  }}
+                                  className="w-full text-right px-4 py-2 text-sm text-green-700 hover:bg-green-50 flex items-center"
+                                  role="menuitem"
+                                >
+                                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                  </svg>
+                                  وكيل
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    updateRole(user._id, "admin");
+                                    document.getElementById(`dropdown-${user._id}`).classList.add('hidden');
+                                  }}
+                                  className="w-full text-right px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 flex items-center"
+                                  role="menuitem"
+                                >
+                                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  مدير
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                           <button
                             onClick={() => deleteUser(user._id)}
-                            className="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                            title="حذف المستخدم"
                           >
-                            <svg
-                              className="ml-1 -mr-1 h-4 w-4"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                clipRule="evenodd"
-                              />
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
-                            حذف
                           </button>
                         </div>
                       </td>
