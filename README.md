@@ -3,7 +3,10 @@
 # Sha3la Gas Distribution & Services Platform
 
 [Figma](https://www.figma.com/design/bI8y3O2nNcBxWX8kZolYFU/Sha3la?t=1MWBvyr9ZbV9LVTc-0)
+" "
 [Trello](https://trello.com/b/zWMNSbst/sha3la)
+" "
+[Documentation](file:///C:/Users/Orange/Desktop/Shu3la.pdf)
 
 
 A comprehensive web application for managing all aspects of residential and commercial gas services—from user registration and order placement to agency management, dispatch, and payment processing. Built with a modern **MERN** stack (MongoDB, Express, React, Node.js), it offers three primary user roles:
