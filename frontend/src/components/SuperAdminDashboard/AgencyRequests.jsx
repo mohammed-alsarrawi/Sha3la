@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const AgencyRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -28,18 +29,41 @@ const AgencyRequests = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:5000/api/agency-requests/${id}`,
         { status: newStatus },
         { withCredentials: true }
       );
+
       setRequests((prev) =>
         prev.map((req) =>
           req._id === id ? { ...req, status: newStatus } : req
         )
       );
+
+      // Show success message
+      if (newStatus === "مقبولة") {
+        Swal.fire({
+          title: "تم قبول الطلب بنجاح",
+          text: "تم تحديث دور المستخدم إلى وكالة",
+          icon: "success",
+          confirmButtonText: "موافق"
+        });
+      } else if (newStatus === "مرفوضة") {
+        Swal.fire({
+          title: "تم رفض الطلب",
+          text: "تم تحديث حالة الطلب إلى مرفوض",
+          icon: "info",
+          confirmButtonText: "موافق"
+        });
+      }
     } catch (err) {
-      alert("حدث خطأ أثناء تحديث حالة الطلب");
+      Swal.fire({
+        title: "حدث خطأ",
+        text: "حدث خطأ أثناء تحديث حالة الطلب",
+        icon: "error",
+        confirmButtonText: "موافق"
+      });
     }
   };
 

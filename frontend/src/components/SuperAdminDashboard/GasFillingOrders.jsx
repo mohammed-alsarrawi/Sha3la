@@ -232,7 +232,7 @@ const GasFillingOrders = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          كمية: {order.quantity} تنك
+                          كمية: {order.quantity} لتر
                         </div>
                         <div className="text-sm text-gray-500">
                           تاريخ: {formatDate(order.date)}

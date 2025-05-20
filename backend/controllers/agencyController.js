@@ -1,5 +1,6 @@
 // backend/controllers/agencyController.js
 const Agency = require("../models/Agency");
+const User = require("../models/User");
 
 // دالة تسجيل وكالة جديدة
 // const registerAgency = async (req, res) => {
@@ -85,21 +86,40 @@ const getAgencyRequests = async (req, res) => {
 // دالة لتحديث حالة طلب تسجيل الوكالة
 const updateAgencyStatus = async (req, res) => {
   try {
+    const { status } = req.body;
+    const agencyId = req.params.id;
+
+    // تحديث حالة الوكالة
     const updatedAgency = await Agency.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
+      agencyId,
+      { status },
       { new: true }
     );
 
     if (!updatedAgency) {
       return res.status(404).json({ message: "الوكالة غير موجودة" });
     }
-    res.status(200).json({ message: "تم تحديث الحالة", agency: updatedAgency });
+
+    // إذا تم قبول الطلب، قم بتحديث دور المستخدم إلى وكالة
+    if (status === "مقبولة") {
+      const user = await User.findOne({ email: updatedAgency.email });
+      if (user) {
+        user.role = "agency";
+        user.isApproved = true;
+        await user.save();
+      }
+    }
+
+    res.status(200).json({ 
+      message: "تم تحديث الحالة بنجاح", 
+      agency: updatedAgency 
+    });
   } catch (error) {
     console.error("Error in updateAgencyStatus:", error);
-    res
-      .status(500)
-      .json({ message: "حدث خطأ أثناء تحديث الحالة", error: error.message });
+    res.status(500).json({ 
+      message: "حدث خطأ أثناء تحديث الحالة", 
+      error: error.message 
+    });
   }
 };
 

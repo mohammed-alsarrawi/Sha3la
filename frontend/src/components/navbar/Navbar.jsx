@@ -52,6 +52,19 @@ function Navbar() {
     fetchUser();
   }, [location]);
 
+  // Auto-redirect admin users to SuperAdminDashboard
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      // Only redirect if not already on admin dashboard or login page
+      if (
+        location.pathname !== "/SuperAdminDashboard" &&
+        location.pathname !== "/login"
+      ) {
+        navigate("/SuperAdminDashboard", { replace: true });
+      }
+    }
+  }, [user, location.pathname, navigate]);
+
   const handleLogout = async () => {
     try {
       await axios.post(

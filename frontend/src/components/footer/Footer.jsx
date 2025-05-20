@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Logo / Branding */}
           <div className="mb-6 md:mb-0">
-            <h2 className="text-2xl font-bold text-white">Sha3la Gas</h2>
+            <h2 className="text-2xl font-bold text-white">Shu3la</h2>
             <p className="text-sm text-gray-400">تجربة توصيل الغاز الأفضل</p>
           </div>
 
@@ -83,7 +83,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} Sha3la Gas. جميع الحقوق محفوظة.
+          &copy; {new Date().getFullYear()} Shu3la . جميع الحقوق محفوظة.
         </div>
       </div>
       </div>

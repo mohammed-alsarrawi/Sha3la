@@ -1,6 +1,8 @@
+// src/components/services/OrderGasCylinders.jsx
+
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert
-import axios from "axios"; // Make sure axios is installed
+import Swal from "sweetalert2";
+import axios from "axios";
 import sylinder from "../../assets/cylinder1.jpg";
 
 const OrderGasCylinders = () => {
@@ -9,11 +11,15 @@ const OrderGasCylinders = () => {
     address: "",
     paymentMethod: "payOnDelivery",
     notes: "",
+    cardNumber: "",
+    cardHolder: "",
+    expiryDate: "",
+    cvv: ""
   });
   const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
-  const [price, setPrice] = useState(7.5); // Default price per cylinder
+  const [price, setPrice] = useState(7.5);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -67,48 +73,107 @@ const OrderGasCylinders = () => {
     }
   };
 
+  const handlePaymentChange = (e) => {
+    const { value } = e.target;
+    setFormData({ ...formData, paymentMethod: value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    const orderData = {
-      quantity: formData.quantity,
-      address: formData.address,
-      paymentMethod: formData.paymentMethod,
-      notes: formData.notes,
-      location: location, // Send the geographic location if available
-    };
+    if (formData.paymentMethod === "payOnline") {
+      setIsLoading(true);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/order-gas", // Ensure this matches your backend API URL
-        orderData,
-        { withCredentials: true } // Send cookies with the request
-      );
+      const paymentData = {
+        quantity: formData.quantity,
+        address: formData.address,
+        paymentMethod: formData.paymentMethod,
+        notes: formData.notes,
+        location: location,
+        amount: price,
+        cardDetails: {
+          last4: formData.cardNumber.slice(-4),
+          brand: "credit_card",
+          expMonth: parseInt(formData.expiryDate.split('/')[0]),
+          expYear: parseInt('20' + formData.expiryDate.split('/')[1])
+        }
+      };
 
-      setIsLoading(false);
-      Swal.fire({
-        title: "تم تأكيد الطلب!",
-        text: `عدد الأسطوانات: ${formData.quantity}`,
-        icon: "success",
-        confirmButtonText: "موافق",
-      });
-      setFormData({
-        quantity: 1,
-        address: "",
-        paymentMethod: "payOnDelivery",
-        notes: "",
-      });
-      setLocation("");
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Error in order submission:", error);
-      Swal.fire({
-        title: "حدث خطأ",
-        text: "لم يتم تقديم الطلب بنجاح. حاول مرة أخرى.",
-        icon: "error",
-        confirmButtonText: "موافق",
-      });
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/payments/store-payment",
+          paymentData
+        );
+
+        setIsLoading(false);
+        Swal.fire({
+          title: "تم تأكيد الطلب!",
+          text: `عدد الأسطوانات: ${formData.quantity}`,
+          icon: "success",
+          confirmButtonText: "موافق",
+        });
+
+        setFormData({
+          quantity: 1,
+          address: "",
+          paymentMethod: "payOnDelivery",
+          notes: "",
+          cardNumber: "",
+          cardHolder: "",
+          expiryDate: "",
+          cvv: ""
+        });
+        setLocation("");
+      } catch (error) {
+        setIsLoading(false);
+        Swal.fire({
+          title: "حدث خطأ",
+          text: "لم يتم تقديم الطلب بنجاح. حاول مرة أخرى.",
+          icon: "error",
+          confirmButtonText: "موافق",
+        });
+      }
+    } else {
+      // handle 'payOnDelivery'
+      setIsLoading(true);
+      const orderData = {
+        quantity: formData.quantity,
+        address: formData.address,
+        paymentMethod: formData.paymentMethod,
+        notes: formData.notes,
+        location: location,
+      };
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/order-gas",
+          orderData
+        );
+
+        setIsLoading(false);
+        Swal.fire({
+          title: "تم تأكيد الطلب!",
+          text: `عدد الأسطوانات: ${formData.quantity}`,
+          icon: "success",
+          confirmButtonText: "موافق",
+        });
+
+        setFormData({
+          quantity: 1,
+          address: "",
+          paymentMethod: "payOnDelivery",
+          notes: "",
+        });
+        setLocation("");
+      } catch (error) {
+        setIsLoading(false);
+        Swal.fire({
+          title: "حدث خطأ",
+          text: "لم يتم تقديم الطلب بنجاح. حاول مرة أخرى.",
+          icon: "error",
+          confirmButtonText: "موافق",
+        });
+      }
     }
   };
 
@@ -243,8 +308,6 @@ const OrderGasCylinders = () => {
                       </button>
                     </div>
                   </div>
-
-                  {/* Removed Contact (Phone number) Input */}
                 </div>
 
                 {/* Address Input */}
@@ -350,7 +413,7 @@ const OrderGasCylinders = () => {
                         name="paymentMethod"
                         value="payOnDelivery"
                         checked={formData.paymentMethod === "payOnDelivery"}
-                        onChange={handleChange}
+                        onChange={handlePaymentChange}
                         className="hidden"
                       />
                       <div
@@ -385,7 +448,7 @@ const OrderGasCylinders = () => {
                         name="paymentMethod"
                         value="payOnline"
                         checked={formData.paymentMethod === "payOnline"}
-                        onChange={handleChange}
+                        onChange={handlePaymentChange}
                         className="hidden"
                       />
                       <div
@@ -410,6 +473,93 @@ const OrderGasCylinders = () => {
                     </label>
                   </div>
                 </div>
+
+                {/* Card Details Form for Online Payment */}
+                {formData.paymentMethod === "payOnline" && (
+                  <div className="space-y-4">
+                    <div>
+                      <label
+                        htmlFor="cardNumber"
+                        className="block text-gray-700 font-medium mb-2"
+                        dir="rtl"
+                      >
+                        رقم البطاقة
+                      </label>
+                      <input
+                        type="text"
+                        id="cardNumber"
+                        name="cardNumber"
+                        value={formData.cardNumber}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        placeholder="XXXX XXXX XXXX XXXX"
+                        maxLength="19"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="cardHolder"
+                        className="block text-gray-700 font-medium mb-2"
+                        dir="rtl"
+                      >
+                        اسم حامل البطاقة
+                      </label>
+                      <input
+                        type="text"
+                        id="cardHolder"
+                        name="cardHolder"
+                        value={formData.cardHolder}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        placeholder="اسم حامل البطاقة"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="expiryDate"
+                          className="block text-gray-700 font-medium mb-2"
+                          dir="rtl"
+                        >
+                          تاريخ الانتهاء
+                        </label>
+                        <input
+                          type="text"
+                          id="expiryDate"
+                          name="expiryDate"
+                          value={formData.expiryDate}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                          placeholder="MM/YY"
+                          maxLength="5"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="cvv"
+                          className="block text-gray-700 font-medium mb-2"
+                          dir="rtl"
+                        >
+                          رمز الأمان
+                        </label>
+                        <input
+                          type="text"
+                          id="cvv"
+                          name="cvv"
+                          value={formData.cvv}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                          placeholder="CVV"
+                          maxLength="3"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Submit Button */}
                 <div className="pt-4">
@@ -440,10 +590,10 @@ const OrderGasCylinders = () => {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
-                        جاري تأكيد الطلب...
+                        جاري انشاء الطلب...
                       </span>
                     ) : (
-                      "تأكيد الطلب والتوصيل"
+                      " انشاء  الطلب "
                     )}
                   </button>
                 </div>

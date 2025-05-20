@@ -1,16 +1,14 @@
-// src/App.jsx
 import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   useLocation,
 } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
-// صفحات ومكونات
+// Pages and components
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
 import Navbar from "./components/navbar/Navbar";
@@ -27,32 +25,44 @@ import SuperAdminDashboard from "./components/SuperAdminDashboard/SuperAdminDash
 import Profile from "./components/profile/profile";
 import Logout from "./components/logout/Loguot";
 
+// Stripe imports
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+// Axios configuration
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-// لفحص المسار الحالي واختبار الإخفاء
-const Layout = ({ children }) => {
-  const location = useLocation(); // :contentReference[oaicite:2]{index=2}
-  // مصفوفة المسارات التي نريد إخفاء Navbar/Footer عليها
-  const hiddenPaths = [
-    "/login",
-    "/register",
-    "/Dashboard",
-    "/SuperAdminDashboard",
-  ];
+// Stripe configuration
+const stripePromise = loadStripe("your-publishable-key-from-stripe");
 
-  // إذا بدأ pathname بأي مسار من hiddenPaths، نخفي Nav وFooter
-  const hideNavFooter = hiddenPaths.some(
-    (path) =>
-      location.pathname === path || location.pathname.startsWith(path + "/") // :contentReference[oaicite:3]{index=3}
-  );
-
+// Layout للصفحات العادية (مع Navbar و Footer)
+const DefaultLayout = ({ children }) => {
   return (
     <>
-      {!hideNavFooter && <Navbar />}
+      <Navbar />
       <main>{children}</main>
-      {!hideNavFooter && <Footer />}
+      <Footer />
     </>
+  );
+};
+
+// Layout لصفحات الادمن (بدون Navbar و Footer)
+const AdminLayout = ({ children }) => {
+  return <main>{children}</main>;
+};
+
+// Wrapper لتحديد أي Layout يستخدم بناءً على المسار
+const LayoutSelector = ({ children }) => {
+  const location = useLocation();
+
+  // تحقق إذا كان المسار يبدأ بـ /SuperAdminDashboard
+  const isAdminPath = location.pathname.startsWith("/SuperAdminDashboard");
+
+  return isAdminPath ? (
+    <AdminLayout>{children}</AdminLayout>
+  ) : (
+    <DefaultLayout>{children}</DefaultLayout>
   );
 };
 
@@ -66,14 +76,24 @@ function App() {
         pauseOnHover
         rtl
       />
-      <Layout>
+      <LayoutSelector>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/order-gas" element={<OrderGasCylinders />} />
+
+          {/* Wrap OrderGasCylinders with Elements */}
+          <Route
+            path="/order-gas"
+            element={
+              <Elements stripe={stripePromise}>
+                <OrderGasCylinders />
+              </Elements>
+            }
+          />
+
           <Route path="/agency" element={<RegisterAgency />} />
           <Route path="/HeatingSystem" element={<HeatingSystem />} />
           <Route path="/GasFilling" element={<GasFilling />} />
@@ -85,7 +105,7 @@ function App() {
           />
           <Route path="/logout" element={<Logout />} />
         </Routes>
-      </Layout>
+      </LayoutSelector>
     </Router>
   );
 }
