@@ -141,6 +141,50 @@ const ContactForm = () => {
 };
 
 const HeatingSystem = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    address: "",
+    date: "",
+    timePreference: "",
+    notes: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // التحقق من صحة رقم الهاتف
+  const validatePhone = (phone) => {
+    // يسمح فقط بالأرقام وعلامة + في البداية
+    return /^\+?[0-9]+$/.test(phone);
+  };
+
+  // التحقق من صحة الاسم
+  const validateName = (name) => {
+    // يسمح فقط بالحروف العربية والإنجليزية والمسافات
+    return /^[\u0600-\u06FFa-zA-Z\s]+$/.test(name);
+  };
+
+  // الحصول على التاريخ الحالي بتنسيق YYYY-MM-DD
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  // التعامل مع تغيير المدخلات
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    // التحقق من صحة المدخلات قبل التحديث
+    if (name === 'phone' && value !== '' && !validatePhone(value)) {
+      return; // لا تقم بتحديث الحالة إذا كان الرقم غير صالح
+    }
+    
+    if (name === 'fullName' && value !== '' && !validateName(value)) {
+      return; // لا تقم بتحديث الحالة إذا كان الاسم غير صالح
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div
       className="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen py-16"

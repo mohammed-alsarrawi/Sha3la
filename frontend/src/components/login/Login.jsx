@@ -104,18 +104,20 @@ function Login() {
             <p className="text-gray-600">أدخل بريدك الإلكتروني وكلمة المرور</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="on">
             <div>
               <label className="block font-medium mb-2 text-gray-700">
                 البريد الإلكتروني
               </label>
               <input
                 type="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@mail.com"
+                placeholder="البريد الإلكتروني"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                autoComplete="email"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
             </div>
 
