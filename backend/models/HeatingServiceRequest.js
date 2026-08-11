@@ -1,3 +1,5 @@
+// backend/models/HeatingServiceRequest.js
+
 const mongoose = require("mongoose");
 
 const HeatingServiceRequestSchema = new mongoose.Schema({
