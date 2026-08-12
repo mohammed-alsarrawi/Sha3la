@@ -1,8 +1,7 @@
-# Sha3la
+# Shu3la
 
-# Sha3la Gas Distribution & Services Platform
+# Shu3la Gas Distribution & Services Platform
 
-[Figma](https://www.figma.com/design/bI8y3O2nNcBxWX8kZolYFU/Sha3la?t=1MWBvyr9ZbV9LVTc-0)
 
 #
 
@@ -165,7 +164,7 @@ This allows agencies to receive geographically relevant orders.
 ## 📁 Project Structure
 
 ```text
-Sha3la/
+Shu3la/
 │
 ├── backend/
 │   ├── controllers/
