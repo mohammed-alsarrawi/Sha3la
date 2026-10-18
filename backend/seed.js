@@ -13,7 +13,7 @@ const Order = require("./models/Order");
 const GasFillingOrder = require("./models/GasFillingOrder");
 const HeatingServiceRequest = require("./models/HeatingServiceRequest");
 const ContactMessage = require("./models/ContactMessage");
-const Payment = require("./models/payment");
+const Payment = require("./models/Payment");
 
 const seedDatabase = async () => {
   try {
