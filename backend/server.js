@@ -19,6 +19,7 @@ const gasFillingOrderRoutes = require("./routes/gasFillingOrderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 // تعريف التطبيق بعد تحميل المتغيرات
 const app = express();
 
@@ -69,6 +70,7 @@ app.use("/api/gas-filling-orders", gasFillingOrderRoutes);
 app.use("/api", userRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api", contactRoutes);
+app.use("/api/chat", chatRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 // الاتصال بقاعدة البيانات وتشغيل السيرفر
 mongoose
