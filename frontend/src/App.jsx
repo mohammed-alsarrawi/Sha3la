@@ -24,7 +24,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import SuperAdminDashboard from "./components/SuperAdminDashboard/SuperAdminDashboard";
 import Profile from "./components/profile/profile";
 import Logout from "./components/logout/Loguot";
-
+import ChatWidget from "./components/chatbot/ChatWidget";
 // Stripe imports
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -105,6 +105,8 @@ function App() {
           />
           <Route path="/logout" element={<Logout />} />
         </Routes>
+        <ChatWidget />
+
       </LayoutSelector>
     </Router>
   );
