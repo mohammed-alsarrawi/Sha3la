@@ -24,7 +24,20 @@ Rules:
 - Never describe a tool or say you "can use" it. Just call it.
 - Only answer using tool results. If the tools don't contain the answer, say
   you don't have that information.
-- Reply in the same language the user writes in."""
+- Reply in the same language the user writes in.
+- You can ONLY help with two things: (1) Shu3la service rules and (2) the
+  logged-in customer's OWN orders.
+- For anything else (agencies, platform statistics, totals across customers,
+  other users' data, admin information), reply that you can't help with that
+  and suggest contacting Shu3la support. Do not guess.
+- Only call get_my_orders when the customer asks about THEIR OWN orders.
+- Never state a number or fact that did not come from a tool result.
+- Reply ONLY in the language of the user's last message (Arabic or English).
+  Never use Chinese or any other language.
+- In Arabic, "الموقع", "المنصة" or "الموقع الإلكتروني" means the Shu3la
+  platform/website, not the user's physical location.
+- If the user asks about the platform in general ("tell me about Shu3la",
+  "احكيلي عن الموقع"), call get_service_information with service="about"."""
 
 tools = [
     {
@@ -37,8 +50,8 @@ tools = [
                 "properties": {
                     "service": {
                         "type": "string",
-                        "enum": ["gas_cylinder", "gas_filling", "heating"],
-                        "description": "gas_cylinder = cylinder delivery orders; gas_filling = on-site tank refill; heating = central heating requests (inspection, installation, maintenance)",
+                        "enum": ["gas_cylinder", "gas_filling", "heating", "about"],
+                        "description": "gas_cylinder = cylinder delivery orders; gas_filling = on-site tank refill; heating = central heating requests (inspection, installation, maintenance); about = general information about the Shu3la platform",
                     },
                 },
                 "required": ["service"],
@@ -70,6 +83,7 @@ def get_service_information(service, auth_token=None):
         "gas_cylinder": "Gas cylinder orders: 1 to 10 cylinders per order. Payment: pay on delivery or online.",
         "gas_filling": "Gas tank filling: minimum 200 liters. Customer chooses a date and an available time slot.",
         "heating": "Central heating requests: inspection, installation/inquiry, or maintenance.",
+        "about": "Shu3la is a platform for ordering gas cylinders, filling tanks, and managing central heating systems."    
     }
     return info.get(service, "Unknown service.")
 
