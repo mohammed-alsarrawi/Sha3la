@@ -70,7 +70,7 @@ const seedDatabase = async () => {
 
     console.log("🌱 Database successfully seeded!");
     console.log("------------------------------------");
-    console.log("Admin Login: admin@shu3la.com | Pass: 12345678");
+    console.log("Admin Login: admin@shu3la.com | Pass: 123");
     console.log("Agency Login: agency@shu3la.com | Pass: 12345678");
     console.log("------------------------------------");
 
