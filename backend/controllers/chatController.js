@@ -3,7 +3,6 @@ exports.chat = async (req, res) => {
   if (!message || typeof message !== "string") {
     return res.status(400).json({ message: "Message is required" });
   }
-
   try {
     const r = await fetch(`${process.env.AI_SERVICE_URL}/chat`, {
       method: "POST",
@@ -18,7 +17,8 @@ exports.chat = async (req, res) => {
     const data = await r.json();
     res.json(data);
   } catch (err) {
-    console.error("Chat error:", err.message);
+    console.error("Chat error:", err.message, err.cause);
     res.status(502).json({ message: "Support assistant is unavailable right now" });
   }
+  
 };

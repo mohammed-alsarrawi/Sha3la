@@ -70,9 +70,10 @@ app.use("/api/gas-filling-orders", gasFillingOrderRoutes);
 app.use("/api", userRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api", contactRoutes);
-app.use("/api/chat", chatRoutes);
+app.use("/api", chatRoutes); 
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 // الاتصال بقاعدة البيانات وتشغيل السيرفر
+
 mongoose
   .connect(process.env.MONGO_URI) // تأكد من أنك قد حددت MONGO_URI في ملف .env
   .then(() => {
